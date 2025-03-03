@@ -1,0 +1,18 @@
+from __future__ import annotations
+
+import math
+import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+
+def as_audio(samples: ArrayLike) -> NDArray[np.float64]:
+    """Copy finite real audio into a (frames, channels) float64 array."""
+    raw = np.asarray(samples)
+    if raw.dtype.kind not in "iuf" or raw.ndim not in (1, 2):
+        raise ValueError("audio must be a real numeric vector or matrix")
+    array = np.array(raw, dtype=np.float64, copy=True)
+    if array.ndim == 1:
+        array = array[:, None]
+    if not 1 <= array.shape[1] <= 8 or not np.isfinite(array).all():
+        raise ValueError("audio needs 1..8 channels and finite samples")
+    return array
