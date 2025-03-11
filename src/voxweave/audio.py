@@ -16,3 +16,12 @@ def as_audio(samples: ArrayLike) -> NDArray[np.float64]:
     if not 1 <= array.shape[1] <= 8 or not np.isfinite(array).all():
         raise ValueError("audio needs 1..8 channels and finite samples")
     return array
+
+
+def sample_rate(value: int) -> int:
+    """Validate an integral sample rate between 1 Hz and 768 kHz."""
+    if isinstance(value, (bool, np.bool_)) or not isinstance(value, (int, np.integer)):
+        raise ValueError("sample rate must be an integer")
+    if not 1 <= value <= 768000:
+        raise ValueError("sample rate must be in 1..768000")
+    return int(value)

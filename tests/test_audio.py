@@ -31,3 +31,7 @@ def test_as_audio_invariants():
     assert x[0, 0] == 0
     np.testing.assert_array_equal(m.as_audio(m.as_audio(x)), x)
     assert y.dtype == np.float64
+
+
+def test_sample_rate_example():
+    assert m.sample_rate(16000) == 16000
