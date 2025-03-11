@@ -35,3 +35,11 @@ def test_as_audio_invariants():
 
 def test_sample_rate_example():
     assert m.sample_rate(16000) == 16000
+
+
+def test_sample_rate_boundaries():
+    for value in [0, -1, 768001, 1.5, True, "16000", np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.sample_rate(value)
+    assert m.sample_rate(1) == 1
+    assert m.sample_rate(768000) == 768000
