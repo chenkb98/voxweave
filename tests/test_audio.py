@@ -61,3 +61,9 @@ def test_duration_boundaries():
         m.duration([1], 0)
     with pytest.raises(ValueError):
         m.duration([np.nan], 8000)
+
+
+def test_duration_invariants():
+    for channels in [1, 2, 8]:
+        assert m.duration(np.zeros((441, channels)), 44100) == 0.01
+    assert m.duration([1, 2], 2) == 2 * m.duration([1], 2)
