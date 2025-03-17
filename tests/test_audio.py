@@ -53,3 +53,11 @@ def test_sample_rate_invariants():
 
 def test_duration_example():
     assert m.duration(np.zeros((320, 2)), 16000) == 0.02
+
+
+def test_duration_boundaries():
+    assert m.duration([], 8000) == 0
+    with pytest.raises(ValueError):
+        m.duration([1], 0)
+    with pytest.raises(ValueError):
+        m.duration([np.nan], 8000)
