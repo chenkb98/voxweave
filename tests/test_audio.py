@@ -43,3 +43,9 @@ def test_sample_rate_boundaries():
             m.sample_rate(value)
     assert m.sample_rate(1) == 1
     assert m.sample_rate(768000) == 768000
+
+
+def test_sample_rate_invariants():
+    for value in [8000, 16000, 22050, 24000, 44100, 48000, 96000]:
+        assert m.sample_rate(np.int64(value)) == value
+        assert type(m.sample_rate(np.int64(value))) is int
