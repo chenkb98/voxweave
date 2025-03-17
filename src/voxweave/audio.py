@@ -30,3 +30,9 @@ def sample_rate(value: int) -> int:
 def duration(samples: ArrayLike, rate: int) -> float:
     """Return duration in seconds, independent of channel count."""
     return len(as_audio(samples)) / sample_rate(rate)
+
+
+def mono(samples: ArrayLike) -> NDArray[np.float64]:
+    """Average channels, retaining a singleton channel dimension."""
+    audio = as_audio(samples)
+    return audio.mean(axis=1, keepdims=True)

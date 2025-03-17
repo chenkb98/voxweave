@@ -67,3 +67,7 @@ def test_duration_invariants():
     for channels in [1, 2, 8]:
         assert m.duration(np.zeros((441, channels)), 44100) == 0.01
     assert m.duration([1, 2], 2) == 2 * m.duration([1], 2)
+
+
+def test_mono_example():
+    np.testing.assert_array_equal(m.mono([[1, -1], [0.5, 0.5]]), [[0], [0.5]])
