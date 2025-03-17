@@ -25,3 +25,8 @@ def sample_rate(value: int) -> int:
     if not 1 <= value <= 768000:
         raise ValueError("sample rate must be in 1..768000")
     return int(value)
+
+
+def duration(samples: ArrayLike, rate: int) -> float:
+    """Return duration in seconds, independent of channel count."""
+    return len(as_audio(samples)) / sample_rate(rate)

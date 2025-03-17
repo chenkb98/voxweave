@@ -49,3 +49,7 @@ def test_sample_rate_invariants():
     for value in [8000, 16000, 22050, 24000, 44100, 48000, 96000]:
         assert m.sample_rate(np.int64(value)) == value
         assert type(m.sample_rate(np.int64(value))) is int
+
+
+def test_duration_example():
+    assert m.duration(np.zeros((320, 2)), 16000) == 0.02
