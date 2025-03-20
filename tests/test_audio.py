@@ -78,3 +78,10 @@ def test_mono_boundaries():
     with pytest.raises(ValueError):
         m.mono([[1, np.nan]])
     np.testing.assert_array_equal(m.mono([0.5]), [[0.5]])
+
+
+def test_mono_invariants():
+    x = np.array([[0.2, 0.8], [-0.6, 0.4]])
+    np.testing.assert_allclose(m.mono(x), m.mono(x[:, ::-1]))
+    np.testing.assert_array_equal(m.mono(m.mono(x)), m.mono(x))
+    np.testing.assert_array_equal(x, [[0.2, 0.8], [-0.6, 0.4]])
