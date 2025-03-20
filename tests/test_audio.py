@@ -85,3 +85,7 @@ def test_mono_invariants():
     np.testing.assert_allclose(m.mono(x), m.mono(x[:, ::-1]))
     np.testing.assert_array_equal(m.mono(m.mono(x)), m.mono(x))
     np.testing.assert_array_equal(x, [[0.2, 0.8], [-0.6, 0.4]])
+
+
+def test_channels_example():
+    np.testing.assert_array_equal(m.channels([1, 2], 2), [[1, 1], [2, 2]])

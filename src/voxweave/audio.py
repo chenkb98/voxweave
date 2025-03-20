@@ -36,3 +36,17 @@ def mono(samples: ArrayLike) -> NDArray[np.float64]:
     """Average channels, retaining a singleton channel dimension."""
     audio = as_audio(samples)
     return audio.mean(axis=1, keepdims=True)
+
+
+def channels(samples: ArrayLike, count: int) -> NDArray[np.float64]:
+    """Duplicate mono channels; reject ambiguous multichannel remapping."""
+    audio = as_audio(samples)
+    if isinstance(count, bool) or not isinstance(count, (int, np.integer)) or not 1 <= count <= 8:
+        raise ValueError("channel count must be an integer in 1..8")
+    if count == audio.shape[1]:
+        return audio
+    if count == 1:
+        return mono(audio)
+    if audio.shape[1] != 1:
+        raise ValueError("only mono audio can be expanded")
+    return np.repeat(audio, count, axis=1)
