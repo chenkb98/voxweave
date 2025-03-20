@@ -71,3 +71,10 @@ def test_duration_invariants():
 
 def test_mono_example():
     np.testing.assert_array_equal(m.mono([[1, -1], [0.5, 0.5]]), [[0], [0.5]])
+
+
+def test_mono_boundaries():
+    assert m.mono(np.empty((0, 2))).shape == (0, 1)
+    with pytest.raises(ValueError):
+        m.mono([[1, np.nan]])
+    np.testing.assert_array_equal(m.mono([0.5]), [[0.5]])
