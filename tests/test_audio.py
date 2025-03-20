@@ -89,3 +89,12 @@ def test_mono_invariants():
 
 def test_channels_example():
     np.testing.assert_array_equal(m.channels([1, 2], 2), [[1, 1], [2, 2]])
+
+
+def test_channels_boundaries():
+    for count in [0, 9, 1.5, True]:
+        with pytest.raises(ValueError):
+            m.channels([1], count)
+    with pytest.raises(ValueError):
+        m.channels([[1, 2]], 3)
+    assert m.channels([], 8).shape == (0, 8)
