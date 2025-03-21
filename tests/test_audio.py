@@ -109,3 +109,10 @@ def test_channels_invariants():
 
 def test_crop_example():
     np.testing.assert_array_equal(m.crop([1, 2, 3, 4], 1, 3), [[2], [3]])
+
+
+def test_crop_boundaries():
+    for start, stop in [(-1, 1), (2, 1), (0, 5), (0.5, 1), (True, 1)]:
+        with pytest.raises(ValueError):
+            m.crop([1, 2], start, stop)
+    assert m.crop([], 0, 0).shape == (0, 1)
