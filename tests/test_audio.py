@@ -98,3 +98,10 @@ def test_channels_boundaries():
     with pytest.raises(ValueError):
         m.channels([[1, 2]], 3)
     assert m.channels([], 8).shape == (0, 8)
+
+
+def test_channels_invariants():
+    x = np.array([[0.25], [-0.75]])
+    for count in range(1, 9):
+        np.testing.assert_array_equal(m.channels(m.channels(x, count), 1), x)
+    np.testing.assert_array_equal(m.channels([[1, -1]], 1), [[0]])
