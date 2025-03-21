@@ -105,3 +105,7 @@ def test_channels_invariants():
     for count in range(1, 9):
         np.testing.assert_array_equal(m.channels(m.channels(x, count), 1), x)
     np.testing.assert_array_equal(m.channels([[1, -1]], 1), [[0]])
+
+
+def test_crop_example():
+    np.testing.assert_array_equal(m.crop([1, 2, 3, 4], 1, 3), [[2], [3]])

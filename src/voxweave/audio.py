@@ -50,3 +50,13 @@ def channels(samples: ArrayLike, count: int) -> NDArray[np.float64]:
     if audio.shape[1] != 1:
         raise ValueError("only mono audio can be expanded")
     return np.repeat(audio, count, axis=1)
+
+
+def crop(samples: ArrayLike, start: int, stop: int) -> NDArray[np.float64]:
+    """Copy a validated half-open frame interval."""
+    audio = as_audio(samples)
+    if any(isinstance(v, bool) or not isinstance(v, (int, np.integer)) for v in [start, stop]):
+        raise ValueError("frame boundaries must be integers")
+    if not 0 <= start <= stop <= len(audio):
+        raise ValueError("crop lies outside audio")
+    return audio[start:stop].copy()
