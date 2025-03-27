@@ -124,3 +124,7 @@ def test_crop_invariants():
         for stop in range(start, 6):
             assert len(m.crop(x, start, stop)) == stop - start
             np.testing.assert_array_equal(m.crop(x, start, stop).ravel(), x[start:stop])
+
+
+def test_pad_example():
+    np.testing.assert_array_equal(m.pad([1, 2], 1, 2).ravel(), [0, 1, 2, 0, 0])

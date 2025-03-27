@@ -60,3 +60,14 @@ def crop(samples: ArrayLike, start: int, stop: int) -> NDArray[np.float64]:
     if not 0 <= start <= stop <= len(audio):
         raise ValueError("crop lies outside audio")
     return audio[start:stop].copy()
+
+
+def pad(samples: ArrayLike, before: int = 0, after: int = 0) -> NDArray[np.float64]:
+    """Add zero-valued frames before and after audio."""
+    audio = as_audio(samples)
+    if any(
+        isinstance(v, bool) or not isinstance(v, (int, np.integer)) or not 0 <= v <= 10000000
+        for v in [before, after]
+    ):
+        raise ValueError("padding counts must be bounded nonnegative integers")
+    return np.pad(audio, ((before, after), (0, 0)))
