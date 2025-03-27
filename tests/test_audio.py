@@ -116,3 +116,11 @@ def test_crop_boundaries():
         with pytest.raises(ValueError):
             m.crop([1, 2], start, stop)
     assert m.crop([], 0, 0).shape == (0, 1)
+
+
+def test_crop_invariants():
+    x = np.arange(5)
+    for start in range(6):
+        for stop in range(start, 6):
+            assert len(m.crop(x, start, stop)) == stop - start
+            np.testing.assert_array_equal(m.crop(x, start, stop).ravel(), x[start:stop])
