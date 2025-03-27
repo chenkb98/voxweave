@@ -128,3 +128,12 @@ def test_crop_invariants():
 
 def test_pad_example():
     np.testing.assert_array_equal(m.pad([1, 2], 1, 2).ravel(), [0, 1, 2, 0, 0])
+
+
+def test_pad_boundaries():
+    for value in [-1, 0.5, True, 10000001]:
+        with pytest.raises(ValueError):
+            m.pad([1], value, 0)
+        with pytest.raises(ValueError):
+            m.pad([1], 0, value)
+    assert m.pad([], 2, 3).shape == (5, 1)
