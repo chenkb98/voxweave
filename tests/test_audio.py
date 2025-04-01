@@ -149,3 +149,12 @@ def test_pad_invariants():
 
 def test_trim_example():
     np.testing.assert_array_equal(m.trim([0, 0.2, 0, -0.3, 0]).ravel(), [0.2, 0, -0.3])
+
+
+def test_trim_boundaries():
+    assert m.trim([0, 0]).shape == (0, 1)
+    assert m.trim([]).shape == (0, 1)
+    for threshold in [-1, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.trim([0], threshold)
+    np.testing.assert_array_equal(m.trim([0.1, 0.2], 0.1).ravel(), [0.2])
