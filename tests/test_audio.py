@@ -137,3 +137,11 @@ def test_pad_boundaries():
         with pytest.raises(ValueError):
             m.pad([1], 0, value)
     assert m.pad([], 2, 3).shape == (5, 1)
+
+
+def test_pad_invariants():
+    x = [[1, -1], [0.2, 0.4]]
+    for before in range(4):
+        for after in range(4):
+            y = m.pad(x, before, after)
+            np.testing.assert_array_equal(m.crop(y, before, before + 2), x)
