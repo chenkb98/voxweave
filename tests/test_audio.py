@@ -158,3 +158,10 @@ def test_trim_boundaries():
         with pytest.raises(ValueError):
             m.trim([0], threshold)
     np.testing.assert_array_equal(m.trim([0.1, 0.2], 0.1).ravel(), [0.2])
+
+
+def test_trim_invariants():
+    x = [[0, 0], [0, 0.5], [0, 0]]
+    np.testing.assert_array_equal(m.trim(x), [[0, 0.5]])
+    np.testing.assert_array_equal(m.trim(m.trim(x)), m.trim(x))
+    np.testing.assert_array_equal(m.trim(m.pad([0.5], 3, 4)), [[0.5]])
