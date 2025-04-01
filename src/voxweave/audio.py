@@ -71,3 +71,12 @@ def pad(samples: ArrayLike, before: int = 0, after: int = 0) -> NDArray[np.float
     ):
         raise ValueError("padding counts must be bounded nonnegative integers")
     return np.pad(audio, ((before, after), (0, 0)))
+
+
+def trim(samples: ArrayLike, threshold: float = 1e-4) -> NDArray[np.float64]:
+    """Remove leading/trailing frames silent in every channel."""
+    audio = as_audio(samples)
+    if not np.isfinite(threshold) or threshold < 0:
+        raise ValueError("threshold must be finite and nonnegative")
+    active = np.flatnonzero(np.max(np.abs(audio), axis=1) > threshold)
+    return audio[active[0] : active[-1] + 1].copy() if len(active) else audio[:0].copy()

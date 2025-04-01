@@ -145,3 +145,7 @@ def test_pad_invariants():
         for after in range(4):
             y = m.pad(x, before, after)
             np.testing.assert_array_equal(m.crop(y, before, before + 2), x)
+
+
+def test_trim_example():
+    np.testing.assert_array_equal(m.trim([0, 0.2, 0, -0.3, 0]).ravel(), [0.2, 0, -0.3])
