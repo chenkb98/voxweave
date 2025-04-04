@@ -165,3 +165,7 @@ def test_trim_invariants():
     np.testing.assert_array_equal(m.trim(x), [[0, 0.5]])
     np.testing.assert_array_equal(m.trim(m.trim(x)), m.trim(x))
     np.testing.assert_array_equal(m.trim(m.pad([0.5], 3, 4)), [[0.5]])
+
+
+def test_gain_example():
+    np.testing.assert_allclose(m.gain([0.1, -0.1], 20).ravel(), [1, -1])

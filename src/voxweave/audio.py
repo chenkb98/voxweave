@@ -80,3 +80,10 @@ def trim(samples: ArrayLike, threshold: float = 1e-4) -> NDArray[np.float64]:
         raise ValueError("threshold must be finite and nonnegative")
     active = np.flatnonzero(np.max(np.abs(audio), axis=1) > threshold)
     return audio[active[0] : active[-1] + 1].copy() if len(active) else audio[:0].copy()
+
+
+def gain(samples: ArrayLike, decibels: float) -> NDArray[np.float64]:
+    """Apply amplitude gain in dB without automatic clipping."""
+    if not np.isfinite(decibels) or abs(decibels) > 600:
+        raise ValueError("gain must be finite and within +/-600 dB")
+    return as_audio(as_audio(samples) * 10.0 ** (decibels / 20.0))
