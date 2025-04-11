@@ -169,3 +169,11 @@ def test_trim_invariants():
 
 def test_gain_example():
     np.testing.assert_allclose(m.gain([0.1, -0.1], 20).ravel(), [1, -1])
+
+
+def test_gain_boundaries():
+    for value in [np.nan, np.inf, -np.inf, 601, -601]:
+        with pytest.raises(ValueError):
+            m.gain([1], value)
+    assert m.gain([], 0).shape == (0, 1)
+    np.testing.assert_array_equal(m.gain([0], 600), [[0]])
