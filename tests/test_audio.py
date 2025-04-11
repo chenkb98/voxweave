@@ -184,3 +184,7 @@ def test_gain_invariants():
     for value in [-60, -3, 0, 3, 60]:
         np.testing.assert_allclose(m.gain(m.gain(x, value), -value).ravel(), x, atol=1e-15)
     np.testing.assert_array_equal(m.gain([2], 0), [[2]])
+
+
+def test_peak_example():
+    assert m.peak([0.2, -0.8, 0.5]) == 0.8

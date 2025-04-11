@@ -87,3 +87,8 @@ def gain(samples: ArrayLike, decibels: float) -> NDArray[np.float64]:
     if not np.isfinite(decibels) or abs(decibels) > 600:
         raise ValueError("gain must be finite and within +/-600 dB")
     return as_audio(as_audio(samples) * 10.0 ** (decibels / 20.0))
+
+
+def peak(samples: ArrayLike) -> float:
+    """Return the largest absolute sample, or zero for empty audio."""
+    return float(np.max(np.abs(as_audio(samples)), initial=0.0))
