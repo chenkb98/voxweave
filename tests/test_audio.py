@@ -177,3 +177,10 @@ def test_gain_boundaries():
             m.gain([1], value)
     assert m.gain([], 0).shape == (0, 1)
     np.testing.assert_array_equal(m.gain([0], 600), [[0]])
+
+
+def test_gain_invariants():
+    x = np.linspace(-0.5, 0.5, 9)
+    for value in [-60, -3, 0, 3, 60]:
+        np.testing.assert_allclose(m.gain(m.gain(x, value), -value).ravel(), x, atol=1e-15)
+    np.testing.assert_array_equal(m.gain([2], 0), [[2]])
