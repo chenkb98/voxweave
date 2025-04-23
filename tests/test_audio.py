@@ -196,3 +196,9 @@ def test_peak_boundaries():
     with pytest.raises(ValueError):
         m.peak([np.nan])
     assert m.peak([2]) == 2
+
+
+def test_peak_invariants():
+    x = np.array([[0.1, -0.9], [0.4, 0.2]])
+    assert m.peak(x) == m.peak(-x) == m.peak(x[::-1])
+    assert m.peak(x * 2) == 2 * m.peak(x)
