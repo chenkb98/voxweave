@@ -206,3 +206,11 @@ def test_peak_invariants():
 
 def test_rms_example():
     assert m.rms([1, -1, 1, -1]) == 1
+
+
+def test_rms_boundaries():
+    assert m.rms([]) == 0
+    assert m.rms([0, 0]) == 0
+    assert m.rms([1e200, -1e200]) == 1e200
+    with pytest.raises(ValueError):
+        m.rms([np.inf])
