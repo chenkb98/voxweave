@@ -188,3 +188,11 @@ def test_gain_invariants():
 
 def test_peak_example():
     assert m.peak([0.2, -0.8, 0.5]) == 0.8
+
+
+def test_peak_boundaries():
+    assert m.peak([]) == 0
+    assert m.peak([0]) == 0
+    with pytest.raises(ValueError):
+        m.peak([np.nan])
+    assert m.peak([2]) == 2
