@@ -202,3 +202,7 @@ def test_peak_invariants():
     x = np.array([[0.1, -0.9], [0.4, 0.2]])
     assert m.peak(x) == m.peak(-x) == m.peak(x[::-1])
     assert m.peak(x * 2) == 2 * m.peak(x)
+
+
+def test_rms_example():
+    assert m.rms([1, -1, 1, -1]) == 1

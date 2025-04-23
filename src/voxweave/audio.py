@@ -92,3 +92,10 @@ def gain(samples: ArrayLike, decibels: float) -> NDArray[np.float64]:
 def peak(samples: ArrayLike) -> float:
     """Return the largest absolute sample, or zero for empty audio."""
     return float(np.max(np.abs(as_audio(samples)), initial=0.0))
+
+
+def rms(samples: ArrayLike) -> float:
+    """Compute stable root-mean-square amplitude over all samples."""
+    audio = as_audio(samples)
+    scale = peak(audio)
+    return float(scale * np.sqrt(np.mean((audio / scale) ** 2))) if scale else 0.0
