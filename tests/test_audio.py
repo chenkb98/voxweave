@@ -214,3 +214,11 @@ def test_rms_boundaries():
     assert m.rms([1e200, -1e200]) == 1e200
     with pytest.raises(ValueError):
         m.rms([np.inf])
+
+
+def test_rms_invariants():
+    x = [3, 4]
+    assert m.rms(x) == pytest.approx(np.sqrt(12.5))
+    assert m.rms(x) == m.rms([-3, -4])
+    assert m.rms(x) == m.rms([3, 4, 3, 4])
+    assert m.rms(x) <= m.peak(x)
