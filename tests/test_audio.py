@@ -222,3 +222,7 @@ def test_rms_invariants():
     assert m.rms(x) == m.rms([-3, -4])
     assert m.rms(x) == m.rms([3, 4, 3, 4])
     assert m.rms(x) <= m.peak(x)
+
+
+def test_normalize_peak_example():
+    np.testing.assert_allclose(m.normalize_peak([1, -2], 1).ravel(), [0.5, -1])
