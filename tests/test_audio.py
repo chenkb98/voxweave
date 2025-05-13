@@ -226,3 +226,11 @@ def test_rms_invariants():
 
 def test_normalize_peak_example():
     np.testing.assert_allclose(m.normalize_peak([1, -2], 1).ravel(), [0.5, -1])
+
+
+def test_normalize_peak_boundaries():
+    for target in [-0.1, 1.1, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.normalize_peak([1], target)
+    np.testing.assert_array_equal(m.normalize_peak([0, 0]), [[0], [0]])
+    assert m.normalize_peak([]).shape == (0, 1)
