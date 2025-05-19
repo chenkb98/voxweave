@@ -234,3 +234,11 @@ def test_normalize_peak_boundaries():
             m.normalize_peak([1], target)
     np.testing.assert_array_equal(m.normalize_peak([0, 0]), [[0], [0]])
     assert m.normalize_peak([]).shape == (0, 1)
+
+
+def test_normalize_peak_invariants():
+    x = [0.2, -0.4, 0.1]
+    for target in [0, 0.3, 1]:
+        y = m.normalize_peak(x, target)
+        assert m.peak(y) == pytest.approx(target)
+        np.testing.assert_allclose(m.normalize_peak(y, target), y)
