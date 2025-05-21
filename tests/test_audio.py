@@ -265,3 +265,10 @@ def test_normalize_rms_invariants():
 
 def test_remove_dc_example():
     np.testing.assert_array_equal(m.remove_dc([[1, 10], [3, 20]]), [[-1, -5], [1, 5]])
+
+
+def test_remove_dc_boundaries():
+    assert m.remove_dc([]).shape == (0, 1)
+    np.testing.assert_array_equal(m.remove_dc([[2, 3]]), [[0, 0]])
+    with pytest.raises(ValueError):
+        m.remove_dc([np.nan])
