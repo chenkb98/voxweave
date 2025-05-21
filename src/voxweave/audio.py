@@ -117,3 +117,9 @@ def normalize_rms(samples: ArrayLike, target: float = 0.1) -> NDArray[np.float64
         raise ValueError("target RMS must be in [0, 1]")
     value = rms(audio)
     return as_audio(audio / value * target) if value else audio
+
+
+def remove_dc(samples: ArrayLike) -> NDArray[np.float64]:
+    """Subtract each channel's mean without mixing channels."""
+    audio = as_audio(samples)
+    return audio - audio.mean(axis=0, keepdims=True) if len(audio) else audio

@@ -261,3 +261,7 @@ def test_normalize_rms_invariants():
         y = m.normalize_rms(x, 0.2)
         assert m.rms(y) == pytest.approx(0.2)
         np.testing.assert_allclose(m.normalize_rms(y, 0.2), y)
+
+
+def test_remove_dc_example():
+    np.testing.assert_array_equal(m.remove_dc([[1, 10], [3, 20]]), [[-1, -5], [1, 5]])
