@@ -242,3 +242,7 @@ def test_normalize_peak_invariants():
         y = m.normalize_peak(x, target)
         assert m.peak(y) == pytest.approx(target)
         np.testing.assert_allclose(m.normalize_peak(y, target), y)
+
+
+def test_normalize_rms_example():
+    np.testing.assert_allclose(m.normalize_rms([1, -1], 0.25).ravel(), [0.25, -0.25])

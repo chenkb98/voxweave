@@ -108,3 +108,12 @@ def normalize_peak(samples: ArrayLike, target: float = 0.95) -> NDArray[np.float
         raise ValueError("target peak must be in [0, 1]")
     maximum = peak(audio)
     return audio / maximum * target if maximum else audio
+
+
+def normalize_rms(samples: ArrayLike, target: float = 0.1) -> NDArray[np.float64]:
+    """Scale non-silent audio to RMS; clipping prevention is explicit."""
+    audio = as_audio(samples)
+    if not np.isfinite(target) or not 0 <= target <= 1:
+        raise ValueError("target RMS must be in [0, 1]")
+    value = rms(audio)
+    return as_audio(audio / value * target) if value else audio
