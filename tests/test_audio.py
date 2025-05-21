@@ -254,3 +254,10 @@ def test_normalize_rms_boundaries():
             m.normalize_rms([1], target)
     np.testing.assert_array_equal(m.normalize_rms([0, 0]), [[0], [0]])
     assert m.normalize_rms([]).shape == (0, 1)
+
+
+def test_normalize_rms_invariants():
+    for x in [[1, 2, 3], [-1, 0, 1], [0.001]]:
+        y = m.normalize_rms(x, 0.2)
+        assert m.rms(y) == pytest.approx(0.2)
+        np.testing.assert_allclose(m.normalize_rms(y, 0.2), y)
