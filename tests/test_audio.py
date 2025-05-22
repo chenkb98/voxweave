@@ -284,3 +284,10 @@ def test_remove_dc_invariants():
 
 def test_reverse_example():
     np.testing.assert_array_equal(m.reverse([[1, 2], [3, 4]]), [[3, 4], [1, 2]])
+
+
+def test_reverse_boundaries():
+    assert m.reverse([]).shape == (0, 1)
+    np.testing.assert_array_equal(m.reverse([1]), [[1]])
+    with pytest.raises(ValueError):
+        m.reverse([np.inf])
