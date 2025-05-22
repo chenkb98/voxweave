@@ -272,3 +272,11 @@ def test_remove_dc_boundaries():
     np.testing.assert_array_equal(m.remove_dc([[2, 3]]), [[0, 0]])
     with pytest.raises(ValueError):
         m.remove_dc([np.nan])
+
+
+def test_remove_dc_invariants():
+    x = np.arange(12).reshape(6, 2)
+    y = m.remove_dc(x)
+    np.testing.assert_allclose(y.mean(axis=0), 0, atol=1e-14)
+    np.testing.assert_allclose(m.remove_dc(x + 100), y)
+    np.testing.assert_allclose(m.remove_dc(y), y)
