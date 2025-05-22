@@ -280,3 +280,7 @@ def test_remove_dc_invariants():
     np.testing.assert_allclose(y.mean(axis=0), 0, atol=1e-14)
     np.testing.assert_allclose(m.remove_dc(x + 100), y)
     np.testing.assert_allclose(m.remove_dc(y), y)
+
+
+def test_reverse_example():
+    np.testing.assert_array_equal(m.reverse([[1, 2], [3, 4]]), [[3, 4], [1, 2]])

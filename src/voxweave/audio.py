@@ -123,3 +123,8 @@ def remove_dc(samples: ArrayLike) -> NDArray[np.float64]:
     """Subtract each channel's mean without mixing channels."""
     audio = as_audio(samples)
     return audio - audio.mean(axis=0, keepdims=True) if len(audio) else audio
+
+
+def reverse(samples: ArrayLike) -> NDArray[np.float64]:
+    """Reverse frame order while preserving channel order."""
+    return as_audio(samples)[::-1].copy()
