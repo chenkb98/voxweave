@@ -304,3 +304,11 @@ def test_reverse_invariants():
 
 def test_repeat_example():
     np.testing.assert_array_equal(m.repeat([1, -1], 2).ravel(), [1, -1, 1, -1])
+
+
+def test_repeat_boundaries():
+    for count in [-1, 1.2, True, 10001]:
+        with pytest.raises(ValueError):
+            m.repeat([1], count)
+    assert m.repeat([[1, 2]], 0).shape == (0, 2)
+    assert m.repeat([], 10000).shape == (0, 1)
