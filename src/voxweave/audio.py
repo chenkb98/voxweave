@@ -128,3 +128,17 @@ def remove_dc(samples: ArrayLike) -> NDArray[np.float64]:
 def reverse(samples: ArrayLike) -> NDArray[np.float64]:
     """Reverse frame order while preserving channel order."""
     return as_audio(samples)[::-1].copy()
+
+
+def repeat(samples: ArrayLike, count: int) -> NDArray[np.float64]:
+    """Repeat a clip an explicitly bounded number of times."""
+    audio = as_audio(samples)
+    if (
+        isinstance(count, bool)
+        or not isinstance(count, (int, np.integer))
+        or not 0 <= count <= 10000
+    ):
+        raise ValueError("repeat count must be an integer in 0..10000")
+    if len(audio) * count > 10000000:
+        raise ValueError("repeated clip exceeds ten million frames")
+    return np.tile(audio, (count, 1))

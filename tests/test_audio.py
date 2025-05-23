@@ -300,3 +300,7 @@ def test_reverse_invariants():
     y = m.reverse(x)
     y[0, 0] = 99
     assert x[-1, 0] == 12
+
+
+def test_repeat_example():
+    np.testing.assert_array_equal(m.repeat([1, -1], 2).ravel(), [1, -1, 1, -1])
