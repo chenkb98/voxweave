@@ -291,3 +291,12 @@ def test_reverse_boundaries():
     np.testing.assert_array_equal(m.reverse([1]), [[1]])
     with pytest.raises(ValueError):
         m.reverse([np.inf])
+
+
+def test_reverse_invariants():
+    x = np.arange(15).reshape(5, 3)
+    np.testing.assert_array_equal(m.reverse(m.reverse(x)), x)
+    assert m.rms(m.reverse(x)) == m.rms(x)
+    y = m.reverse(x)
+    y[0, 0] = 99
+    assert x[-1, 0] == 12
