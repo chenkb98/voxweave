@@ -312,3 +312,13 @@ def test_repeat_boundaries():
             m.repeat([1], count)
     assert m.repeat([[1, 2]], 0).shape == (0, 2)
     assert m.repeat([], 10000).shape == (0, 1)
+
+
+def test_repeat_invariants():
+    x = [[0.1, 0.2], [0.3, 0.4]]
+    for count in range(1, 5):
+        result = m.repeat(x, count)
+        assert len(result) == 2 * count
+        assert m.rms(result) == pytest.approx(m.rms(x))
+        for i in range(count):
+            np.testing.assert_array_equal(result[2 * i : 2 * i + 2], x)
