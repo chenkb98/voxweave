@@ -345,3 +345,7 @@ def test_mix_invariants():
         np.testing.assert_allclose(m.mix(a, b, weight), m.mix(b, a, 1 - weight))
     np.testing.assert_array_equal(m.mix(a, b, 0).ravel(), a)
     np.testing.assert_array_equal(m.mix(a, b, 1).ravel(), b)
+
+
+def test_concatenate_example():
+    np.testing.assert_array_equal(m.concatenate([[1, 2], [3]]).ravel(), [1, 2, 3])

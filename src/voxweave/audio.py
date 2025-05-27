@@ -150,3 +150,13 @@ def mix(left: ArrayLike, right: ArrayLike, weight: float = 0.5) -> NDArray[np.fl
     if a.shape != b.shape or not np.isfinite(weight) or not 0 <= weight <= 1:
         raise ValueError("mix requires equal shapes and a weight in [0, 1]")
     return as_audio((1 - weight) * a + weight * b)
+
+
+def concatenate(clips: list[ArrayLike]) -> NDArray[np.float64]:
+    """Join clips with matching channel counts in time order."""
+    arrays = [as_audio(clip) for clip in clips]
+    if not arrays:
+        return np.empty((0, 1), dtype=np.float64)
+    if any(a.shape[1] != arrays[0].shape[1] for a in arrays):
+        raise ValueError("channel counts must match")
+    return np.concatenate(arrays, axis=0)
