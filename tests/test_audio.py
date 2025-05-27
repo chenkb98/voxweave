@@ -326,3 +326,14 @@ def test_repeat_invariants():
 
 def test_mix_example():
     np.testing.assert_allclose(m.mix([0, 1], [1, 0], 0.25).ravel(), [0.25, 0.75])
+
+
+def test_mix_boundaries():
+    for weight in [-1, 2, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.mix([1], [1], weight)
+    with pytest.raises(ValueError):
+        m.mix([1], [1, 2])
+    with pytest.raises(ValueError):
+        m.mix([[1, 2]], [1])
+    assert m.mix([], []).shape == (0, 1)
