@@ -337,3 +337,11 @@ def test_mix_boundaries():
     with pytest.raises(ValueError):
         m.mix([[1, 2]], [1])
     assert m.mix([], []).shape == (0, 1)
+
+
+def test_mix_invariants():
+    a, b = [0.1, 0.5], [-0.3, 0.2]
+    for weight in [0, 0.2, 0.5, 1]:
+        np.testing.assert_allclose(m.mix(a, b, weight), m.mix(b, a, 1 - weight))
+    np.testing.assert_array_equal(m.mix(a, b, 0).ravel(), a)
+    np.testing.assert_array_equal(m.mix(a, b, 1).ravel(), b)
