@@ -142,3 +142,11 @@ def repeat(samples: ArrayLike, count: int) -> NDArray[np.float64]:
     if len(audio) * count > 10000000:
         raise ValueError("repeated clip exceeds ten million frames")
     return np.tile(audio, (count, 1))
+
+
+def mix(left: ArrayLike, right: ArrayLike, weight: float = 0.5) -> NDArray[np.float64]:
+    """Blend equal-shaped clips without implicit padding or broadcasting."""
+    a, b = as_audio(left), as_audio(right)
+    if a.shape != b.shape or not np.isfinite(weight) or not 0 <= weight <= 1:
+        raise ValueError("mix requires equal shapes and a weight in [0, 1]")
+    return as_audio((1 - weight) * a + weight * b)

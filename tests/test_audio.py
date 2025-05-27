@@ -322,3 +322,7 @@ def test_repeat_invariants():
         assert m.rms(result) == pytest.approx(m.rms(x))
         for i in range(count):
             np.testing.assert_array_equal(result[2 * i : 2 * i + 2], x)
+
+
+def test_mix_example():
+    np.testing.assert_allclose(m.mix([0, 1], [1, 0], 0.25).ravel(), [0.25, 0.75])
