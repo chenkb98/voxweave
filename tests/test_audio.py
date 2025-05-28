@@ -358,3 +358,13 @@ def test_concatenate_boundaries():
         m.concatenate([[1], [[1, 2]]])
     with pytest.raises(ValueError):
         m.concatenate([[1], [np.nan]])
+
+
+def test_concatenate_invariants():
+    x = np.arange(7)
+    for split in range(8):
+        np.testing.assert_array_equal(m.concatenate([x[:split], x[split:]]).ravel(), x)
+    a, b, c = [1], [2, 3], [4]
+    np.testing.assert_array_equal(
+        m.concatenate([m.concatenate([a, b]), c]), m.concatenate([a, m.concatenate([b, c])])
+    )
