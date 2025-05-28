@@ -349,3 +349,12 @@ def test_mix_invariants():
 
 def test_concatenate_example():
     np.testing.assert_array_equal(m.concatenate([[1, 2], [3]]).ravel(), [1, 2, 3])
+
+
+def test_concatenate_boundaries():
+    assert m.concatenate([]).shape == (0, 1)
+    assert m.concatenate([np.empty((0, 2))]).shape == (0, 2)
+    with pytest.raises(ValueError):
+        m.concatenate([[1], [[1, 2]]])
+    with pytest.raises(ValueError):
+        m.concatenate([[1], [np.nan]])
