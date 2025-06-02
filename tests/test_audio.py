@@ -380,3 +380,12 @@ def test_fade_in_boundaries():
             m.fade_in([1, 2], frames)
     np.testing.assert_array_equal(m.fade_in([1], 1), [[0]])
     np.testing.assert_array_equal(m.fade_in([1, 2], 0).ravel(), [1, 2])
+
+
+def test_fade_in_invariants():
+    x = np.arange(10).reshape(5, 2)
+    for frames in range(6):
+        y = m.fade_in(x, frames)
+        assert y.shape == x.shape
+        assert m.peak(y) <= m.peak(x)
+    np.testing.assert_array_equal(x, np.arange(10).reshape(5, 2))
