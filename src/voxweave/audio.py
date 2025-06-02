@@ -160,3 +160,18 @@ def concatenate(clips: list[ArrayLike]) -> NDArray[np.float64]:
     if any(a.shape[1] != arrays[0].shape[1] for a in arrays):
         raise ValueError("channel counts must match")
     return np.concatenate(arrays, axis=0)
+
+
+def fade_in(samples: ArrayLike, frames: int) -> NDArray[np.float64]:
+    """Apply a linear incoming ramp in place on a copy."""
+    audio = as_audio(samples)
+    if (
+        isinstance(frames, bool)
+        or not isinstance(frames, (int, np.integer))
+        or not 0 <= frames <= len(audio)
+    ):
+        raise ValueError("fade length must be an integer within the clip")
+    if frames:
+        ramp = np.linspace(0, 1, frames) if frames > 1 else np.zeros(1)
+        audio[:frames] *= ramp[:, None]
+    return audio

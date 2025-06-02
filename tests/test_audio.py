@@ -368,3 +368,7 @@ def test_concatenate_invariants():
     np.testing.assert_array_equal(
         m.concatenate([m.concatenate([a, b]), c]), m.concatenate([a, m.concatenate([b, c])])
     )
+
+
+def test_fade_in_example():
+    np.testing.assert_allclose(m.fade_in([1, 1, 1, 1], 3).ravel(), [0, 0.5, 1, 1])
