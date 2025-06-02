@@ -372,3 +372,11 @@ def test_concatenate_invariants():
 
 def test_fade_in_example():
     np.testing.assert_allclose(m.fade_in([1, 1, 1, 1], 3).ravel(), [0, 0.5, 1, 1])
+
+
+def test_fade_in_boundaries():
+    for frames in [-1, 5, 1.5, True]:
+        with pytest.raises(ValueError):
+            m.fade_in([1, 2], frames)
+    np.testing.assert_array_equal(m.fade_in([1], 1), [[0]])
+    np.testing.assert_array_equal(m.fade_in([1, 2], 0).ravel(), [1, 2])
