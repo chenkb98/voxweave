@@ -175,3 +175,18 @@ def fade_in(samples: ArrayLike, frames: int) -> NDArray[np.float64]:
         ramp = np.linspace(0, 1, frames) if frames > 1 else np.zeros(1)
         audio[:frames] *= ramp[:, None]
     return audio
+
+
+def fade_out(samples: ArrayLike, frames: int) -> NDArray[np.float64]:
+    """Apply a linear outgoing ramp in place on a copy."""
+    audio = as_audio(samples)
+    if (
+        isinstance(frames, bool)
+        or not isinstance(frames, (int, np.integer))
+        or not 0 <= frames <= len(audio)
+    ):
+        raise ValueError("fade length must be an integer within the clip")
+    if frames:
+        ramp = np.linspace(1, 0, frames) if frames > 1 else np.zeros(1)
+        audio[-frames:] *= ramp[:, None]
+    return audio

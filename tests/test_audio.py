@@ -389,3 +389,7 @@ def test_fade_in_invariants():
         assert y.shape == x.shape
         assert m.peak(y) <= m.peak(x)
     np.testing.assert_array_equal(x, np.arange(10).reshape(5, 2))
+
+
+def test_fade_out_example():
+    np.testing.assert_allclose(m.fade_out([1, 1, 1, 1], 3).ravel(), [1, 1, 0.5, 0])
