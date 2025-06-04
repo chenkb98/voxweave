@@ -190,3 +190,19 @@ def fade_out(samples: ArrayLike, frames: int) -> NDArray[np.float64]:
         ramp = np.linspace(1, 0, frames) if frames > 1 else np.zeros(1)
         audio[-frames:] *= ramp[:, None]
     return audio
+
+
+def crossfade(left: ArrayLike, right: ArrayLike, frames: int) -> NDArray[np.float64]:
+    """Join clips with a complementary linear crossfade."""
+    a, b = as_audio(left), as_audio(right)
+    if (
+        a.shape[1] != b.shape[1]
+        or isinstance(frames, bool)
+        or not isinstance(frames, (int, np.integer))
+        or not 0 <= frames <= min(len(a), len(b))
+    ):
+        raise ValueError("crossfade requires matching channels and valid overlap")
+    if not frames:
+        return concatenate([a, b])
+    ramp = np.linspace(0, 1, frames)[:, None] if frames > 1 else np.full((1, 1), 0.5)
+    return concatenate([a[:-frames], a[-frames:] * (1 - ramp) + b[:frames] * ramp, b[frames:]])
