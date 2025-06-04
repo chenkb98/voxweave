@@ -393,3 +393,11 @@ def test_fade_in_invariants():
 
 def test_fade_out_example():
     np.testing.assert_allclose(m.fade_out([1, 1, 1, 1], 3).ravel(), [1, 1, 0.5, 0])
+
+
+def test_fade_out_boundaries():
+    for frames in [-1, 5, 1.5, True]:
+        with pytest.raises(ValueError):
+            m.fade_out([1, 2], frames)
+    np.testing.assert_array_equal(m.fade_out([1], 1), [[0]])
+    np.testing.assert_array_equal(m.fade_out([1, 2], 0).ravel(), [1, 2])
