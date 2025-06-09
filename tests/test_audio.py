@@ -414,3 +414,11 @@ def test_fade_out_invariants():
 
 def test_crossfade_example():
     np.testing.assert_allclose(m.crossfade([1, 1, 1], [0, 0, 0], 2).ravel(), [1, 1, 0, 0])
+
+
+def test_crossfade_boundaries():
+    for frames in [-1, 3, 0.5, True]:
+        with pytest.raises(ValueError):
+            m.crossfade([1, 1], [0, 0], frames)
+    np.testing.assert_array_equal(m.crossfade([1], [0], 1), [[0.5]])
+    assert m.crossfade([], [], 0).shape == (0, 1)
