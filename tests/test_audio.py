@@ -422,3 +422,14 @@ def test_crossfade_boundaries():
             m.crossfade([1, 1], [0, 0], frames)
     np.testing.assert_array_equal(m.crossfade([1], [0], 1), [[0.5]])
     assert m.crossfade([], [], 0).shape == (0, 1)
+
+
+def test_crossfade_invariants():
+    for frames in range(5):
+        output = m.crossfade(np.ones(5), np.ones(4), frames)
+        assert len(output) == 9 - frames
+        np.testing.assert_allclose(output, 1)
+    a, b = [1, 2, 3], [4, 5, 6]
+    np.testing.assert_allclose(
+        m.reverse(m.crossfade(a, b, 2)), m.crossfade(m.reverse(b), m.reverse(a), 2)
+    )
