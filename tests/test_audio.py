@@ -433,3 +433,7 @@ def test_crossfade_invariants():
     np.testing.assert_allclose(
         m.reverse(m.crossfade(a, b, 2)), m.crossfade(m.reverse(b), m.reverse(a), 2)
     )
+
+
+def test_resample_example():
+    np.testing.assert_allclose(m.resample([0, 1, 0], 2, 4).ravel(), [0, 0.5, 1, 0.5, 0, 0])

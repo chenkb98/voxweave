@@ -206,3 +206,21 @@ def crossfade(left: ArrayLike, right: ArrayLike, frames: int) -> NDArray[np.floa
         return concatenate([a, b])
     ramp = np.linspace(0, 1, frames)[:, None] if frames > 1 else np.full((1, 1), 0.5)
     return concatenate([a[:-frames], a[-frames:] * (1 - ramp) + b[:frames] * ramp, b[frames:]])
+
+
+def resample(samples: ArrayLike, source_rate: int, target_rate: int) -> NDArray[np.float64]:
+    """Linearly resample; no anti-alias filter is implied."""
+    audio = as_audio(samples)
+    source_rate, target_rate = sample_rate(source_rate), sample_rate(target_rate)
+    length = int(math.floor(len(audio) * target_rate / source_rate + 0.5))
+    if length > 10000000:
+        raise ValueError("resampled clip exceeds ten million frames")
+    if not length or not len(audio):
+        return np.empty((length, audio.shape[1]), dtype=np.float64)
+    positions = np.arange(length) * source_rate / target_rate
+    return np.column_stack(
+        [
+            np.interp(positions, np.arange(len(audio)), audio[:, channel])
+            for channel in range(audio.shape[1])
+        ]
+    )
