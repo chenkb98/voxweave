@@ -446,3 +446,10 @@ def test_resample_boundaries():
         m.resample([1], 0, 4)
     with pytest.raises(ValueError):
         m.resample([1], 4, True)
+
+
+def test_resample_invariants():
+    x = np.arange(12).reshape(6, 2)
+    np.testing.assert_array_equal(m.resample(x, 16000, 16000), x)
+    for a, b in [(8000, 16000), (16000, 8000), (44100, 48000)]:
+        np.testing.assert_allclose(m.resample(np.ones((20, 2)), a, b), 1)
