@@ -437,3 +437,12 @@ def test_crossfade_invariants():
 
 def test_resample_example():
     np.testing.assert_allclose(m.resample([0, 1, 0], 2, 4).ravel(), [0, 0.5, 1, 0.5, 0, 0])
+
+
+def test_resample_boundaries():
+    assert m.resample([], 16000, 24000).shape == (0, 1)
+    assert m.resample([1], 4, 1).shape == (0, 1)
+    with pytest.raises(ValueError):
+        m.resample([1], 0, 4)
+    with pytest.raises(ValueError):
+        m.resample([1], 4, True)
