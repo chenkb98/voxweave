@@ -457,3 +457,11 @@ def test_resample_invariants():
 
 def test_frames_example():
     np.testing.assert_array_equal(m.frames([1, 2, 3], 2, 2)[:, :, 0], [[1, 2], [3, 0]])
+
+
+def test_frames_boundaries():
+    for size, hop in [(0, 1), (1, 0), (-1, 1), (1, 1.5), (True, 1)]:
+        with pytest.raises(ValueError):
+            m.frames([1], size, hop)
+    assert m.frames([], 4, 2).shape == (0, 4, 1)
+    assert m.frames([1], 4, 2, False).shape == (0, 4, 1)
