@@ -465,3 +465,12 @@ def test_frames_boundaries():
             m.frames([1], size, hop)
     assert m.frames([], 4, 2).shape == (0, 4, 1)
     assert m.frames([1], 4, 2, False).shape == (0, 4, 1)
+
+
+def test_frames_invariants():
+    x = np.arange(11)
+    for size in range(1, 6):
+        chunks = m.frames(x, size, size)
+        np.testing.assert_array_equal(chunks[:, :, 0].ravel()[: len(x)], x)
+        assert np.all(chunks[:, :, 0].ravel()[len(x) :] == 0)
+    np.testing.assert_array_equal(m.frames([1, 2, 3], 2, 1, False)[:, :, 0], [[1, 2], [2, 3]])
