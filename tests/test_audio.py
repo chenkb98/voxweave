@@ -453,3 +453,7 @@ def test_resample_invariants():
     np.testing.assert_array_equal(m.resample(x, 16000, 16000), x)
     for a, b in [(8000, 16000), (16000, 8000), (44100, 48000)]:
         np.testing.assert_allclose(m.resample(np.ones((20, 2)), a, b), 1)
+
+
+def test_frames_example():
+    np.testing.assert_array_equal(m.frames([1, 2, 3], 2, 2)[:, :, 0], [[1, 2], [3, 0]])

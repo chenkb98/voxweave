@@ -224,3 +224,21 @@ def resample(samples: ArrayLike, source_rate: int, target_rate: int) -> NDArray[
             for channel in range(audio.shape[1])
         ]
     )
+
+
+def frames(samples: ArrayLike, size: int, hop: int, pad_end: bool = True) -> NDArray[np.float64]:
+    """Frame audio as (windows, frames, channels), optionally zero-padding the tail."""
+    audio = as_audio(samples)
+    if any(
+        isinstance(v, bool) or not isinstance(v, (int, np.integer)) or not 1 <= v <= 1000000
+        for v in [size, hop]
+    ):
+        raise ValueError("size and hop must be bounded positive integers")
+    starts = list(range(0, len(audio) if pad_end else max(0, len(audio) - size + 1), hop))
+    if len(starts) * size * audio.shape[1] > 10000000:
+        raise ValueError("framing would allocate too many samples")
+    output = np.zeros((len(starts), size, audio.shape[1]))
+    for i, start in enumerate(starts):
+        part = audio[start : start + size]
+        output[i, : len(part)] = part
+    return output
