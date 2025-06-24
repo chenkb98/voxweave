@@ -478,3 +478,12 @@ def test_frames_invariants():
 
 def test_overlap_add_example():
     np.testing.assert_array_equal(m.overlap_add([[[1], [2]], [[2], [3]]], 1).ravel(), [1, 2, 3])
+
+
+def test_overlap_add_boundaries():
+    for windows, hop in [([[1]], 1), ([[[np.nan]]], 1), ([[[1]]], 0), ([[[1]]], 2)]:
+        with pytest.raises(ValueError):
+            m.overlap_add(windows, hop)
+    assert m.overlap_add(np.empty((0, 3, 2)), 1).shape == (0, 2)
+    with pytest.raises(ValueError):
+        m.overlap_add([[[1]]], 1, 2)
