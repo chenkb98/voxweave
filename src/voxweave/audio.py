@@ -242,3 +242,37 @@ def frames(samples: ArrayLike, size: int, hop: int, pad_end: bool = True) -> NDA
         part = audio[start : start + size]
         output[i, : len(part)] = part
     return output
+
+
+def overlap_add(windows: ArrayLike, hop: int, length: int | None = None) -> NDArray[np.float64]:
+    """Reconstruct rectangular windows by averaging overlapping samples."""
+    array = np.asarray(windows, dtype=np.float64)
+    if (
+        array.ndim != 3
+        or not 1 <= array.shape[2] <= 8
+        or array.shape[1] < 1
+        or not np.isfinite(array).all()
+    ):
+        raise ValueError("windows must be finite (windows, frames, channels)")
+    if (
+        isinstance(hop, bool)
+        or not isinstance(hop, (int, np.integer))
+        or not 1 <= hop <= array.shape[1]
+    ):
+        raise ValueError("hop must be between one and the window size")
+    total = (len(array) - 1) * hop + array.shape[1] if len(array) else 0
+    if total > 10000000:
+        raise ValueError("reconstruction is too large")
+    if length is None:
+        length = total
+    if (
+        isinstance(length, bool)
+        or not isinstance(length, (int, np.integer))
+        or not 0 <= length <= total
+    ):
+        raise ValueError("invalid reconstruction length")
+    output, counts = np.zeros((total, array.shape[2])), np.zeros((total, 1))
+    for i, part in enumerate(array):
+        output[i * hop : i * hop + len(part)] += part
+        counts[i * hop : i * hop + len(part)] += 1
+    return (output / np.maximum(counts, 1))[:length]

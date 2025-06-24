@@ -474,3 +474,7 @@ def test_frames_invariants():
         np.testing.assert_array_equal(chunks[:, :, 0].ravel()[: len(x)], x)
         assert np.all(chunks[:, :, 0].ravel()[len(x) :] == 0)
     np.testing.assert_array_equal(m.frames([1, 2, 3], 2, 1, False)[:, :, 0], [[1, 2], [2, 3]])
+
+
+def test_overlap_add_example():
+    np.testing.assert_array_equal(m.overlap_add([[[1], [2]], [[2], [3]]], 1).ravel(), [1, 2, 3])
