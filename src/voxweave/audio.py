@@ -276,3 +276,10 @@ def overlap_add(windows: ArrayLike, hop: int, length: int | None = None) -> NDAr
         output[i * hop : i * hop + len(part)] += part
         counts[i * hop : i * hop + len(part)] += 1
     return (output / np.maximum(counts, 1))[:length]
+
+
+def pcm16_encode(samples: ArrayLike) -> bytes:
+    """Interleave channels as little-endian signed PCM16 with saturation."""
+    audio = as_audio(samples)
+    integers = np.clip(np.rint(np.clip(audio, -1, 1) * 32768), -32768, 32767)
+    return integers.astype("<i2").tobytes()

@@ -494,3 +494,7 @@ def test_overlap_add_invariants():
     for size in range(1, 7):
         for hop in range(1, size + 1):
             np.testing.assert_allclose(m.overlap_add(m.frames(x, size, hop), hop, len(x)), x)
+
+
+def test_pcm16_encode_example():
+    assert m.pcm16_encode([-1, 0, 1]) == b"\x00\x80\x00\x00\xff\x7f"
