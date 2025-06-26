@@ -487,3 +487,10 @@ def test_overlap_add_boundaries():
     assert m.overlap_add(np.empty((0, 3, 2)), 1).shape == (0, 2)
     with pytest.raises(ValueError):
         m.overlap_add([[[1]]], 1, 2)
+
+
+def test_overlap_add_invariants():
+    x = np.arange(26).reshape(13, 2)
+    for size in range(1, 7):
+        for hop in range(1, size + 1):
+            np.testing.assert_allclose(m.overlap_add(m.frames(x, size, hop), hop, len(x)), x)
