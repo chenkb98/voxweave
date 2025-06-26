@@ -498,3 +498,10 @@ def test_overlap_add_invariants():
 
 def test_pcm16_encode_example():
     assert m.pcm16_encode([-1, 0, 1]) == b"\x00\x80\x00\x00\xff\x7f"
+
+
+def test_pcm16_encode_boundaries():
+    assert m.pcm16_encode([]) == b""
+    assert m.pcm16_encode([-2, 2]) == m.pcm16_encode([-1, 1])
+    with pytest.raises(ValueError):
+        m.pcm16_encode([np.nan])
