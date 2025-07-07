@@ -512,3 +512,7 @@ def test_pcm16_encode_invariants():
     values = np.linspace(-1, 1, 101)
     decoded = np.frombuffer(m.pcm16_encode(values), dtype="<i2").astype(float) / 32768
     assert np.max(np.abs(decoded - values)) <= 1 / 32768
+
+
+def test_pcm16_decode_example():
+    np.testing.assert_array_equal(m.pcm16_decode(b"\x00\x80\x00\x00").ravel(), [-1, 0])

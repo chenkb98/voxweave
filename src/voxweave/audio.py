@@ -283,3 +283,18 @@ def pcm16_encode(samples: ArrayLike) -> bytes:
     audio = as_audio(samples)
     integers = np.clip(np.rint(np.clip(audio, -1, 1) * 32768), -32768, 32767)
     return integers.astype("<i2").tobytes()
+
+
+def pcm16_decode(data: bytes, channel_count: int = 1) -> NDArray[np.float64]:
+    """Decode complete interleaved little-endian PCM16 frames."""
+    if not isinstance(data, bytes):
+        raise ValueError("PCM payload must be bytes")
+    if (
+        isinstance(channel_count, bool)
+        or not isinstance(channel_count, int)
+        or not 1 <= channel_count <= 8
+    ):
+        raise ValueError("channel count must be in 1..8")
+    if len(data) % (2 * channel_count):
+        raise ValueError("PCM payload contains an incomplete frame")
+    return np.frombuffer(data, dtype="<i2").astype(np.float64).reshape(-1, channel_count) / 32768
