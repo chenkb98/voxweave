@@ -505,3 +505,10 @@ def test_pcm16_encode_boundaries():
     assert m.pcm16_encode([-2, 2]) == m.pcm16_encode([-1, 1])
     with pytest.raises(ValueError):
         m.pcm16_encode([np.nan])
+
+
+def test_pcm16_encode_invariants():
+    assert m.pcm16_encode([[0, -1], [1, 0]]) == b"\x00\x00\x00\x80\xff\x7f\x00\x00"
+    values = np.linspace(-1, 1, 101)
+    decoded = np.frombuffer(m.pcm16_encode(values), dtype="<i2").astype(float) / 32768
+    assert np.max(np.abs(decoded - values)) <= 1 / 32768
