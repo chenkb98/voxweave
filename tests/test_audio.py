@@ -523,3 +523,12 @@ def test_pcm16_decode_boundaries():
         with pytest.raises(ValueError):
             m.pcm16_decode(payload, channels)
     assert m.pcm16_decode(b"", 2).shape == (0, 2)
+
+
+def test_pcm16_decode_invariants():
+    for count in range(1, 9):
+        x = np.linspace(-1, 0.9, 5 * count).reshape(5, count)
+        y = m.pcm16_decode(m.pcm16_encode(x), count)
+        assert y.shape == x.shape
+        assert np.max(np.abs(x - y)) <= 1 / 32768
+        assert m.pcm16_encode(y) == m.pcm16_encode(x)
