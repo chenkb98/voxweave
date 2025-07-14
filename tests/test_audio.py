@@ -532,3 +532,7 @@ def test_pcm16_decode_invariants():
         assert y.shape == x.shape
         assert np.max(np.abs(x - y)) <= 1 / 32768
         assert m.pcm16_encode(y) == m.pcm16_encode(x)
+
+
+def test_wav_encode_example():
+    assert m.wav_encode([0, 1], 16000)[:4] == b"RIFF"

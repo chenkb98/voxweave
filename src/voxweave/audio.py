@@ -298,3 +298,18 @@ def pcm16_decode(data: bytes, channel_count: int = 1) -> NDArray[np.float64]:
     if len(data) % (2 * channel_count):
         raise ValueError("PCM payload contains an incomplete frame")
     return np.frombuffer(data, dtype="<i2").astype(np.float64).reshape(-1, channel_count) / 32768
+
+
+def wav_encode(samples: ArrayLike, rate: int) -> bytes:
+    """Serialize a self-contained PCM16 WAV in memory."""
+    import io
+    import wave
+
+    audio, rate = as_audio(samples), sample_rate(rate)
+    buffer = io.BytesIO()
+    with wave.open(buffer, "wb") as output:
+        output.setnchannels(audio.shape[1])
+        output.setsampwidth(2)
+        output.setframerate(rate)
+        output.writeframes(pcm16_encode(audio))
+    return buffer.getvalue()
