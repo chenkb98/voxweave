@@ -516,3 +516,10 @@ def test_pcm16_encode_invariants():
 
 def test_pcm16_decode_example():
     np.testing.assert_array_equal(m.pcm16_decode(b"\x00\x80\x00\x00").ravel(), [-1, 0])
+
+
+def test_pcm16_decode_boundaries():
+    for payload, channels in [(b"x", 1), (b"xx", 2), (b"", 0), (b"", True), ("xx", 1)]:
+        with pytest.raises(ValueError):
+            m.pcm16_decode(payload, channels)
+    assert m.pcm16_decode(b"", 2).shape == (0, 2)
