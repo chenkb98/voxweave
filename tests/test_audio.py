@@ -536,3 +536,11 @@ def test_pcm16_decode_invariants():
 
 def test_wav_encode_example():
     assert m.wav_encode([0, 1], 16000)[:4] == b"RIFF"
+
+
+def test_wav_encode_boundaries():
+    with pytest.raises(ValueError):
+        m.wav_encode([1], 0)
+    with pytest.raises(ValueError):
+        m.wav_encode([np.nan], 16000)
+    assert len(m.wav_encode([], 16000)) >= 44
