@@ -561,3 +561,11 @@ def test_wav_decode_example():
     audio, rate = m.wav_decode(m.wav_encode([0, -1], 8000))
     assert rate == 8000
     np.testing.assert_array_equal(audio.ravel(), [0, -1])
+
+
+def test_wav_decode_boundaries():
+    for payload in [b"", b"RIFF", b"not wav", m.wav_encode([1, 2], 16000)[:-1]]:
+        with pytest.raises(ValueError):
+            m.wav_decode(payload)
+    audio, rate = m.wav_decode(m.wav_encode([], 24000))
+    assert audio.shape == (0, 1) and rate == 24000
