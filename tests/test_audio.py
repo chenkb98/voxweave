@@ -544,3 +544,14 @@ def test_wav_encode_boundaries():
     with pytest.raises(ValueError):
         m.wav_encode([np.nan], 16000)
     assert len(m.wav_encode([], 16000)) >= 44
+
+
+def test_wav_encode_invariants():
+    import io, wave
+
+    for channels in [1, 2, 8]:
+        payload = m.wav_encode(np.zeros((7, channels)), 24000)
+        with wave.open(io.BytesIO(payload), "rb") as handle:
+            assert handle.getparams()[:4] == (channels, 2, 24000, 7)
+            assert handle.readframes(7) == bytes(14 * channels)
+        assert payload == m.wav_encode(np.zeros((7, channels)), 24000)
