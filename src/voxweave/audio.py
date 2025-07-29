@@ -313,3 +313,27 @@ def wav_encode(samples: ArrayLike, rate: int) -> bytes:
         output.setframerate(rate)
         output.writeframes(pcm16_encode(audio))
     return buffer.getvalue()
+
+
+def wav_decode(payload: bytes) -> tuple[NDArray[np.float64], int]:
+    """Read uncompressed PCM16 WAV and reject truncated frame payloads."""
+    import io
+    import wave
+
+    if not isinstance(payload, bytes):
+        raise ValueError("WAV payload must be bytes")
+    try:
+        with wave.open(io.BytesIO(payload), "rb") as source:
+            if source.getsampwidth() != 2 or source.getcomptype() != "NONE":
+                raise ValueError("only uncompressed PCM16 WAV is supported")
+            rate, count, channels = (
+                sample_rate(source.getframerate()),
+                source.getnframes(),
+                source.getnchannels(),
+            )
+            data = source.readframes(count)
+            if len(data) != count * channels * 2:
+                raise ValueError("truncated WAV frames")
+            return pcm16_decode(data, channels), rate
+    except (wave.Error, EOFError) as error:
+        raise ValueError("invalid PCM16 WAV") from error

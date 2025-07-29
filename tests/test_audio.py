@@ -555,3 +555,9 @@ def test_wav_encode_invariants():
             assert handle.getparams()[:4] == (channels, 2, 24000, 7)
             assert handle.readframes(7) == bytes(14 * channels)
         assert payload == m.wav_encode(np.zeros((7, channels)), 24000)
+
+
+def test_wav_decode_example():
+    audio, rate = m.wav_decode(m.wav_encode([0, -1], 8000))
+    assert rate == 8000
+    np.testing.assert_array_equal(audio.ravel(), [0, -1])
