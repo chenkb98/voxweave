@@ -569,3 +569,13 @@ def test_wav_decode_boundaries():
             m.wav_decode(payload)
     audio, rate = m.wav_decode(m.wav_encode([], 24000))
     assert audio.shape == (0, 1) and rate == 24000
+
+
+def test_wav_decode_invariants():
+    for channels in [1, 2, 8]:
+        x = np.linspace(-0.8, 0.8, 11 * channels).reshape(11, channels)
+        payload = m.wav_encode(x, 44100)
+        y, rate = m.wav_decode(payload)
+        assert rate == 44100 and y.shape == x.shape
+        assert np.max(np.abs(x - y)) <= 1 / 32768
+        assert m.wav_encode(y, rate) == payload
