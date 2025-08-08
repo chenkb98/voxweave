@@ -583,3 +583,11 @@ def test_wav_decode_invariants():
 
 def test_clipping_fraction_example():
     assert m.clipping_fraction([-1, 0, 0.5, 2]) == 0.5
+
+
+def test_clipping_fraction_boundaries():
+    assert m.clipping_fraction([]) == 0
+    for threshold in [0, -1, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.clipping_fraction([1], threshold)
+    assert m.clipping_fraction([1], 1) == 1
