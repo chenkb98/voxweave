@@ -602,3 +602,10 @@ def test_clipping_fraction_invariants():
 
 def test_zero_crossing_rate_example():
     assert m.zero_crossing_rate([1, -1, 1, -1]) == 1
+
+
+def test_zero_crossing_rate_boundaries():
+    assert m.zero_crossing_rate([]) == 0
+    assert m.zero_crossing_rate([1]) == 0
+    assert m.zero_crossing_rate([0, 0, 0]) == 0
+    assert m.zero_crossing_rate([-1, 0, 1]) == 0.5
