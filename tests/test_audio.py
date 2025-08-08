@@ -598,3 +598,7 @@ def test_clipping_fraction_invariants():
     assert m.clipping_fraction(x) == m.clipping_fraction(-np.array(x))
     assert m.clipping_fraction(x, 0.5) >= m.clipping_fraction(x, 1)
     assert 0 <= m.clipping_fraction(x) <= 1
+
+
+def test_zero_crossing_rate_example():
+    assert m.zero_crossing_rate([1, -1, 1, -1]) == 1

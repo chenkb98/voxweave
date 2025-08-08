@@ -345,3 +345,12 @@ def clipping_fraction(samples: ArrayLike, threshold: float = 1.0) -> float:
     if not np.isfinite(threshold) or threshold <= 0:
         raise ValueError("threshold must be finite and positive")
     return float(np.mean(np.abs(audio) >= threshold)) if audio.size else 0.0
+
+
+def zero_crossing_rate(samples: ArrayLike) -> float:
+    """Mean sign-bit changes between adjacent samples within each channel."""
+    audio = as_audio(samples)
+    if len(audio) < 2:
+        return 0.0
+    signs = audio < 0
+    return float(np.mean(signs[1:] != signs[:-1]))
