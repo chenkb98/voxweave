@@ -337,3 +337,11 @@ def wav_decode(payload: bytes) -> tuple[NDArray[np.float64], int]:
             return pcm16_decode(data, channels), rate
     except (wave.Error, EOFError) as error:
         raise ValueError("invalid PCM16 WAV") from error
+
+
+def clipping_fraction(samples: ArrayLike, threshold: float = 1.0) -> float:
+    """Fraction of samples at or beyond an absolute clipping threshold."""
+    audio = as_audio(samples)
+    if not np.isfinite(threshold) or threshold <= 0:
+        raise ValueError("threshold must be finite and positive")
+    return float(np.mean(np.abs(audio) >= threshold)) if audio.size else 0.0

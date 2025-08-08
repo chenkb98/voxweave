@@ -579,3 +579,7 @@ def test_wav_decode_invariants():
         assert rate == 44100 and y.shape == x.shape
         assert np.max(np.abs(x - y)) <= 1 / 32768
         assert m.wav_encode(y, rate) == payload
+
+
+def test_clipping_fraction_example():
+    assert m.clipping_fraction([-1, 0, 0.5, 2]) == 0.5
