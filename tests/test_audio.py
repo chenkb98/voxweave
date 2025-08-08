@@ -591,3 +591,10 @@ def test_clipping_fraction_boundaries():
         with pytest.raises(ValueError):
             m.clipping_fraction([1], threshold)
     assert m.clipping_fraction([1], 1) == 1
+
+
+def test_clipping_fraction_invariants():
+    x = [-2, -0.5, 0, 0.5, 2]
+    assert m.clipping_fraction(x) == m.clipping_fraction(-np.array(x))
+    assert m.clipping_fraction(x, 0.5) >= m.clipping_fraction(x, 1)
+    assert 0 <= m.clipping_fraction(x) <= 1
