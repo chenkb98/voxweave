@@ -620,3 +620,13 @@ def test_zero_crossing_rate_invariants():
 
 def test_snr_example():
     assert m.snr([1, -1], [0.9, -0.9]) == pytest.approx(20)
+
+
+def test_snr_boundaries():
+    assert m.snr([0], [0]) == 120
+    assert m.snr([0], [1]) == -120
+    assert m.snr([], []) == 120
+    with pytest.raises(ValueError):
+        m.snr([1], [1, 2])
+    with pytest.raises(ValueError):
+        m.snr([1], [1], 0)
