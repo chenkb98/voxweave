@@ -354,3 +354,16 @@ def zero_crossing_rate(samples: ArrayLike) -> float:
         return 0.0
     signs = audio < 0
     return float(np.mean(signs[1:] != signs[:-1]))
+
+
+def snr(reference: ArrayLike, estimate: ArrayLike, floor_db: float = -120.0) -> float:
+    """Signal-to-error ratio capped to a documented finite range."""
+    a, b = as_audio(reference), as_audio(estimate)
+    if a.shape != b.shape or not np.isfinite(floor_db) or not -300 <= floor_db < 0:
+        raise ValueError("SNR requires paired shapes and a negative finite floor")
+    signal, error = rms(a), rms(a - b)
+    if error == 0:
+        return -floor_db
+    if signal == 0:
+        return floor_db
+    return float(np.clip(20 * (math.log10(signal) - math.log10(error)), floor_db, -floor_db))
