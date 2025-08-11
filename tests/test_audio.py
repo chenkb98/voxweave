@@ -609,3 +609,10 @@ def test_zero_crossing_rate_boundaries():
     assert m.zero_crossing_rate([1]) == 0
     assert m.zero_crossing_rate([0, 0, 0]) == 0
     assert m.zero_crossing_rate([-1, 0, 1]) == 0.5
+
+
+def test_zero_crossing_rate_invariants():
+    x = [1, 1, -1, -1, 1]
+    assert m.zero_crossing_rate(x) == 0.5
+    assert m.zero_crossing_rate(x) == m.zero_crossing_rate(x[::-1])
+    assert m.zero_crossing_rate([[1, -1], [1, -1]]) == 0
