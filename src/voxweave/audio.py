@@ -367,3 +367,16 @@ def snr(reference: ArrayLike, estimate: ArrayLike, floor_db: float = -120.0) -> 
     if signal == 0:
         return floor_db
     return float(np.clip(20 * (math.log10(signal) - math.log10(error)), floor_db, -floor_db))
+
+
+def spectrum(samples: ArrayLike, rate: int) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """Return one-sided frequencies and per-channel amplitude magnitudes."""
+    audio, rate = as_audio(samples), sample_rate(rate)
+    if not len(audio):
+        return np.empty(0), np.empty((0, audio.shape[1]))
+    magnitude = np.abs(np.fft.rfft(audio, axis=0)) / len(audio)
+    if len(audio) % 2:
+        magnitude[1:] *= 2
+    else:
+        magnitude[1:-1] *= 2
+    return np.fft.rfftfreq(len(audio), 1 / rate), magnitude

@@ -637,3 +637,9 @@ def test_snr_invariants():
     for scale in [0.01, 2, -3]:
         assert m.snr(a * scale, b * scale) == pytest.approx(m.snr(a, b))
     assert m.snr(a, a) > m.snr(a, b) > m.snr(a, np.zeros(3))
+
+
+def test_spectrum_example():
+    freq, magnitude = m.spectrum([0, 1, 0, -1], 4)
+    np.testing.assert_allclose(freq, [0, 1, 2])
+    np.testing.assert_allclose(magnitude.ravel(), [0, 1, 0], atol=1e-15)
