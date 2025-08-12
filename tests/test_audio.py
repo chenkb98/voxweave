@@ -630,3 +630,10 @@ def test_snr_boundaries():
         m.snr([1], [1, 2])
     with pytest.raises(ValueError):
         m.snr([1], [1], 0)
+
+
+def test_snr_invariants():
+    a, b = np.array([1, 2, -1]), np.array([0.8, 2.1, -0.9])
+    for scale in [0.01, 2, -3]:
+        assert m.snr(a * scale, b * scale) == pytest.approx(m.snr(a, b))
+    assert m.snr(a, a) > m.snr(a, b) > m.snr(a, np.zeros(3))
