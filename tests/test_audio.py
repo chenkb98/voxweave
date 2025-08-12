@@ -651,3 +651,12 @@ def test_spectrum_boundaries():
     np.testing.assert_array_equal(m.spectrum([3], 1)[1], [[3]])
     with pytest.raises(ValueError):
         m.spectrum([1], 0)
+
+
+def test_spectrum_invariants():
+    for size in [5, 6, 7, 8]:
+        _, dc = m.spectrum(np.ones(size) * 0.3, size)
+        assert dc[0, 0] == pytest.approx(0.3)
+        np.testing.assert_allclose(dc[1:], 0, atol=1e-14)
+        _, sine = m.spectrum(np.sin(2 * np.pi * np.arange(size) / size), size)
+        assert sine[1, 0] == pytest.approx(1)
