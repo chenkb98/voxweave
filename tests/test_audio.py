@@ -643,3 +643,11 @@ def test_spectrum_example():
     freq, magnitude = m.spectrum([0, 1, 0, -1], 4)
     np.testing.assert_allclose(freq, [0, 1, 2])
     np.testing.assert_allclose(magnitude.ravel(), [0, 1, 0], atol=1e-15)
+
+
+def test_spectrum_boundaries():
+    freq, mag = m.spectrum([], 8000)
+    assert freq.shape == (0,) and mag.shape == (0, 1)
+    np.testing.assert_array_equal(m.spectrum([3], 1)[1], [[3]])
+    with pytest.raises(ValueError):
+        m.spectrum([1], 0)
