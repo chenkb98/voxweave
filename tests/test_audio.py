@@ -672,3 +672,10 @@ def test_spectral_centroid_boundaries():
     assert m.spectral_centroid([1, 1, 1], 3) == pytest.approx(0)
     with pytest.raises(ValueError):
         m.spectral_centroid([1], 0)
+
+
+def test_spectral_centroid_invariants():
+    x = np.sin(2 * np.pi * 3 * np.arange(32) / 32)
+    assert m.spectral_centroid(x, 32) == pytest.approx(3)
+    assert m.spectral_centroid(x * 5, 32) == pytest.approx(3)
+    assert m.spectral_centroid(np.column_stack([x, -x]), 32) == pytest.approx(3)
