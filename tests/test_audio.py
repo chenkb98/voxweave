@@ -679,3 +679,7 @@ def test_spectral_centroid_invariants():
     assert m.spectral_centroid(x, 32) == pytest.approx(3)
     assert m.spectral_centroid(x * 5, 32) == pytest.approx(3)
     assert m.spectral_centroid(np.column_stack([x, -x]), 32) == pytest.approx(3)
+
+
+def test_spectral_flatness_example():
+    assert 0 < m.spectral_flatness([0, 1, 0, -1], 4) < 0.001

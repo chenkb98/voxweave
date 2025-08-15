@@ -390,3 +390,15 @@ def spectral_centroid(samples: ArrayLike, rate: int) -> float:
     weights = magnitudes.mean(axis=1)
     total = float(weights.sum())
     return float(frequencies @ (weights / total)) if total else 0.0
+
+
+def spectral_flatness(samples: ArrayLike, rate: int, epsilon: float = 1e-12) -> float:
+    """Geometric-to-arithmetic mean ratio of the averaged power spectrum."""
+    if not np.isfinite(epsilon) or epsilon <= 0:
+        raise ValueError("epsilon must be positive")
+    _, magnitudes = spectrum(samples, rate)
+    if not len(magnitudes) or not np.any(magnitudes):
+        return 0.0
+    power = (magnitudes / np.max(magnitudes)) ** 2
+    weights = np.maximum(power.mean(axis=1), epsilon)
+    return float(np.exp(np.mean(np.log(weights))) / np.mean(weights))
