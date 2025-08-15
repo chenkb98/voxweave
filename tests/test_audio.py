@@ -664,3 +664,11 @@ def test_spectrum_invariants():
 
 def test_spectral_centroid_example():
     assert m.spectral_centroid([0, 1, 0, -1], 4) == pytest.approx(1)
+
+
+def test_spectral_centroid_boundaries():
+    assert m.spectral_centroid([], 8000) == 0
+    assert m.spectral_centroid([0, 0], 8000) == 0
+    assert m.spectral_centroid([1, 1, 1], 3) == pytest.approx(0)
+    with pytest.raises(ValueError):
+        m.spectral_centroid([1], 0)
