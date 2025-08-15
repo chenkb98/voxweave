@@ -683,3 +683,11 @@ def test_spectral_centroid_invariants():
 
 def test_spectral_flatness_example():
     assert 0 < m.spectral_flatness([0, 1, 0, -1], 4) < 0.001
+
+
+def test_spectral_flatness_boundaries():
+    assert m.spectral_flatness([], 4) == 0
+    assert m.spectral_flatness([0, 0], 4) == 0
+    for epsilon in [0, -1, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.spectral_flatness([1], 4, epsilon)
