@@ -380,3 +380,13 @@ def spectrum(samples: ArrayLike, rate: int) -> tuple[NDArray[np.float64], NDArra
     else:
         magnitude[1:-1] *= 2
     return np.fft.rfftfreq(len(audio), 1 / rate), magnitude
+
+
+def spectral_centroid(samples: ArrayLike, rate: int) -> float:
+    """Amplitude-weighted centroid in Hz, averaging channel magnitudes."""
+    frequencies, magnitudes = spectrum(samples, rate)
+    if not len(frequencies):
+        return 0.0
+    weights = magnitudes.mean(axis=1)
+    total = float(weights.sum())
+    return float(frequencies @ (weights / total)) if total else 0.0
