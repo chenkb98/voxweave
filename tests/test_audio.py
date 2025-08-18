@@ -691,3 +691,11 @@ def test_spectral_flatness_boundaries():
     for epsilon in [0, -1, np.nan, np.inf]:
         with pytest.raises(ValueError):
             m.spectral_flatness([1], 4, epsilon)
+
+
+def test_spectral_flatness_invariants():
+    x = [0.1, -0.5, 0.3, 0.4, -0.2]
+    value = m.spectral_flatness(x, 5)
+    assert 0 <= value <= 1
+    assert m.spectral_flatness(np.array(x) * 7, 5) == pytest.approx(value)
+    assert m.spectral_flatness(np.array(x) * -1, 5) == pytest.approx(value)
