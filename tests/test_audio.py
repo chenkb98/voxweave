@@ -703,3 +703,11 @@ def test_spectral_flatness_invariants():
 
 def test_band_energy_example():
     assert m.band_energy([0, 1, 0, -1], 4, 0.5, 1.5) == pytest.approx(1)
+
+
+def test_band_energy_boundaries():
+    for low, high in [(-1, 1), (2, 1), (0, 3), (np.nan, 1)]:
+        with pytest.raises(ValueError):
+            m.band_energy([1], 4, low, high)
+    assert m.band_energy([], 4, 0, 2) == 0
+    assert m.band_energy([0, 0], 4, 0, 2) == 0
