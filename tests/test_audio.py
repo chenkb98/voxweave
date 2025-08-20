@@ -699,3 +699,7 @@ def test_spectral_flatness_invariants():
     assert 0 <= value <= 1
     assert m.spectral_flatness(np.array(x) * 7, 5) == pytest.approx(value)
     assert m.spectral_flatness(np.array(x) * -1, 5) == pytest.approx(value)
+
+
+def test_band_energy_example():
+    assert m.band_energy([0, 1, 0, -1], 4, 0.5, 1.5) == pytest.approx(1)

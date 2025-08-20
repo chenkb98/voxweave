@@ -402,3 +402,16 @@ def spectral_flatness(samples: ArrayLike, rate: int, epsilon: float = 1e-12) -> 
     power = (magnitudes / np.max(magnitudes)) ** 2
     weights = np.maximum(power.mean(axis=1), epsilon)
     return float(np.exp(np.mean(np.log(weights))) / np.mean(weights))
+
+
+def band_energy(samples: ArrayLike, rate: int, low: float, high: float) -> float:
+    """Fraction of squared one-sided amplitudes in a closed frequency band."""
+    rate = sample_rate(rate)
+    if not np.isfinite([low, high]).all() or not 0 <= low <= high <= rate / 2:
+        raise ValueError("band must be within [0, Nyquist]")
+    frequencies, magnitude = spectrum(samples, rate)
+    scale = float(np.max(magnitude, initial=0))
+    if not scale:
+        return 0.0
+    power = (magnitude / scale) ** 2
+    return float(power[(frequencies >= low) & (frequencies <= high)].sum() / power.sum())
