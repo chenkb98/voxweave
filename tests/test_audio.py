@@ -711,3 +711,10 @@ def test_band_energy_boundaries():
             m.band_energy([1], 4, low, high)
     assert m.band_energy([], 4, 0, 2) == 0
     assert m.band_energy([0, 0], 4, 0, 2) == 0
+
+
+def test_band_energy_invariants():
+    x = np.sin(2 * np.pi * np.arange(16) / 16)
+    assert m.band_energy(x, 16, 0, 8) == pytest.approx(1)
+    assert m.band_energy(x, 16, 2, 8) == pytest.approx(0, abs=1e-20)
+    assert m.band_energy(x * 3, 16, 0, 2) == pytest.approx(m.band_energy(x, 16, 0, 2))
