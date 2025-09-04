@@ -22,3 +22,10 @@ def test_byte_chunks_invariants():
         chunks = m.byte_chunks(payload, size)
         assert b"".join(chunks) == payload
         assert all(0 < len(chunk) <= size for chunk in chunks)
+
+
+def test_PCMDecoder_example():
+    decoder = m.PCMDecoder()
+    assert decoder.feed(b"\x00").shape == (0, 1)
+    np.testing.assert_array_equal(decoder.feed(b"\x80"), [[-1]])
+    decoder.flush()
