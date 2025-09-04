@@ -14,3 +14,11 @@ def test_byte_chunks_boundaries():
     with pytest.raises(ValueError):
         m.byte_chunks("abc", 2)
     assert m.byte_chunks(b"", 2) == []
+
+
+def test_byte_chunks_invariants():
+    payload = bytes(range(255))
+    for size in range(1, 33):
+        chunks = m.byte_chunks(payload, size)
+        assert b"".join(chunks) == payload
+        assert all(0 < len(chunk) <= size for chunk in chunks)
