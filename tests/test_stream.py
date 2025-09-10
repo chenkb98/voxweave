@@ -29,3 +29,15 @@ def test_PCMDecoder_example():
     assert decoder.feed(b"\x00").shape == (0, 1)
     np.testing.assert_array_equal(decoder.feed(b"\x80"), [[-1]])
     decoder.flush()
+
+
+def test_PCMDecoder_boundaries():
+    with pytest.raises(ValueError):
+        m.PCMDecoder(0)
+    decoder = m.PCMDecoder(2)
+    decoder.feed(b"xx")
+    with pytest.raises(ValueError):
+        decoder.flush()
+    with pytest.raises(ValueError):
+        decoder.feed("xx")
+    assert decoder.pending == b"xx"
