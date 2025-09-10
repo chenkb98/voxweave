@@ -41,3 +41,15 @@ def test_PCMDecoder_boundaries():
     with pytest.raises(ValueError):
         decoder.feed("xx")
     assert decoder.pending == b"xx"
+
+
+def test_PCMDecoder_invariants():
+    from voxweave import audio
+
+    x = np.linspace(-1, 0.8, 24).reshape(12, 2)
+    payload = audio.pcm16_encode(x)
+    for size in range(1, 12):
+        decoder = m.PCMDecoder(2)
+        result = audio.concatenate([decoder.feed(chunk) for chunk in m.byte_chunks(payload, size)])
+        decoder.flush()
+        np.testing.assert_array_equal(result, audio.pcm16_decode(payload, 2))
