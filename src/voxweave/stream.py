@@ -45,3 +45,37 @@ class PCMDecoder:
     def flush(self) -> None:
         if self.pending:
             raise ValueError("stream ended with an incomplete PCM frame")
+
+
+class AudioFramer:
+    """Turn arbitrary audio packets into exact contiguous frames."""
+
+    def __init__(self, size: int, channels: int = 1):
+        self.size = _count(size)
+        self.pending = audio.channels([], channels)
+        self.emitted = 0
+
+    def feed(self, samples: ArrayLike) -> list[NDArray[np.float64]]:
+        array = audio.as_audio(samples)
+        if array.shape[1] != self.pending.shape[1]:
+            raise ValueError("channel count changed midstream")
+        combined = audio.concatenate([self.pending, array])
+        count = len(combined) // self.size
+        result = [combined[i * self.size : (i + 1) * self.size].copy() for i in range(count)]
+        self.pending = combined[count * self.size :].copy()
+        self.emitted += count * self.size
+        return result
+
+    def flush(self, pad_end: bool = False) -> list[NDArray[np.float64]]:
+        if not isinstance(pad_end, bool):
+            raise ValueError("pad_end must be boolean")
+        if not len(self.pending):
+            return []
+        result = (
+            audio.pad(self.pending, after=self.size - len(self.pending))
+            if pad_end
+            else self.pending.copy()
+        )
+        self.emitted += len(result)
+        self.pending = self.pending[:0].copy()
+        return [result]

@@ -53,3 +53,10 @@ def test_PCMDecoder_invariants():
         result = audio.concatenate([decoder.feed(chunk) for chunk in m.byte_chunks(payload, size)])
         decoder.flush()
         np.testing.assert_array_equal(result, audio.pcm16_decode(payload, 2))
+
+
+def test_AudioFramer_example():
+    framer = m.AudioFramer(3)
+    assert framer.feed([1, 2]) == []
+    np.testing.assert_array_equal(framer.feed([3, 4])[0].ravel(), [1, 2, 3])
+    np.testing.assert_array_equal(framer.flush()[0], [[4]])
