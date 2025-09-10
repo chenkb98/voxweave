@@ -60,3 +60,13 @@ def test_AudioFramer_example():
     assert framer.feed([1, 2]) == []
     np.testing.assert_array_equal(framer.feed([3, 4])[0].ravel(), [1, 2, 3])
     np.testing.assert_array_equal(framer.flush()[0], [[4]])
+
+
+def test_AudioFramer_boundaries():
+    with pytest.raises(ValueError):
+        m.AudioFramer(0)
+    framer = m.AudioFramer(2, 2)
+    with pytest.raises(ValueError):
+        framer.feed([1])
+    assert framer.emitted == 0 and len(framer.pending) == 0
+    assert framer.flush() == []
