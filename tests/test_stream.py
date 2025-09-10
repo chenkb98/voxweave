@@ -70,3 +70,16 @@ def test_AudioFramer_boundaries():
         framer.feed([1])
     assert framer.emitted == 0 and len(framer.pending) == 0
     assert framer.flush() == []
+
+
+def test_AudioFramer_invariants():
+    from voxweave import audio
+
+    x = np.arange(17)
+    for packet in range(1, 8):
+        framer, result = m.AudioFramer(4), []
+        for i in range(0, len(x), packet):
+            result.extend(framer.feed(x[i : i + packet]))
+        result.extend(framer.flush())
+        np.testing.assert_array_equal(audio.concatenate(result).ravel(), x)
+        assert framer.emitted == len(x) and framer.flush() == []
