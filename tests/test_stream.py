@@ -90,3 +90,15 @@ def test_RingBuffer_example():
     assert buffer.append([1, 2]) == 0
     np.testing.assert_array_equal(buffer.read(1), [[1]])
     assert len(buffer) == 1
+
+
+def test_RingBuffer_boundaries():
+    buffer = m.RingBuffer(2)
+    buffer.append([1])
+    with pytest.raises(BufferError):
+        buffer.append([2, 3])
+    with pytest.raises(ValueError):
+        buffer.append([np.nan])
+    with pytest.raises(ValueError):
+        buffer.read(2)
+    np.testing.assert_array_equal(buffer.read(1), [[1]])
