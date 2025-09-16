@@ -83,3 +83,10 @@ def test_AudioFramer_invariants():
         result.extend(framer.flush())
         np.testing.assert_array_equal(audio.concatenate(result).ravel(), x)
         assert framer.emitted == len(x) and framer.flush() == []
+
+
+def test_RingBuffer_example():
+    buffer = m.RingBuffer(3)
+    assert buffer.append([1, 2]) == 0
+    np.testing.assert_array_equal(buffer.read(1), [[1]])
+    assert len(buffer) == 1

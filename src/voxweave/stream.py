@@ -79,3 +79,35 @@ class AudioFramer:
         self.emitted += len(result)
         self.pending = self.pending[:0].copy()
         return [result]
+
+
+class RingBuffer:
+    """Bounded audio queue with explicit rejection or oldest-frame eviction."""
+
+    def __init__(self, capacity: int, channels: int = 1, overflow: str = "reject"):
+        self.capacity = _count(capacity)
+        if overflow not in ["reject", "drop_oldest"]:
+            raise ValueError("unknown overflow policy")
+        self.overflow, self.samples = overflow, audio.channels([], channels)
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def append(self, samples: ArrayLike) -> int:
+        values = audio.as_audio(samples)
+        if values.shape[1] != self.samples.shape[1]:
+            raise ValueError("channel mismatch")
+        excess = max(0, len(self.samples) + len(values) - self.capacity)
+        if excess and self.overflow == "reject":
+            raise BufferError("audio queue is full")
+        combined = audio.concatenate([self.samples, values])
+        self.samples = combined[-self.capacity :].copy()
+        return excess
+
+    def read(self, count: int) -> NDArray[np.float64]:
+        _count(count, True)
+        if count > len(self.samples):
+            raise ValueError("not enough buffered frames")
+        result = self.samples[:count].copy()
+        self.samples = self.samples[count:].copy()
+        return result
