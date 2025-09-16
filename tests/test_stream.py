@@ -102,3 +102,14 @@ def test_RingBuffer_boundaries():
     with pytest.raises(ValueError):
         buffer.read(2)
     np.testing.assert_array_equal(buffer.read(1), [[1]])
+
+
+def test_RingBuffer_invariants():
+    buffer = m.RingBuffer(3, overflow="drop_oldest")
+    assert buffer.append([1, 2]) == 0
+    assert buffer.append([3, 4, 5]) == 2
+    np.testing.assert_array_equal(buffer.read(3).ravel(), [3, 4, 5])
+    assert len(buffer) == 0
+    for count in range(4):
+        buffer.append(np.arange(count))
+        np.testing.assert_array_equal(buffer.read(count).ravel(), np.arange(count))
