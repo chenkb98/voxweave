@@ -119,3 +119,13 @@ def test_SampleClock_example():
     clock = m.SampleClock(16000)
     assert clock.advance(320) == (0, 320)
     assert clock.seconds == 0.02
+
+
+def test_SampleClock_boundaries():
+    for rate in [0, -1, True]:
+        with pytest.raises(ValueError):
+            m.SampleClock(rate)
+    clock = m.SampleClock(8000, 2**53 - 1)
+    with pytest.raises(ValueError):
+        clock.advance(1)
+    assert clock.offset == 2**53 - 1
