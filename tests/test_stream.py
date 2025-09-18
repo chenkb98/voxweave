@@ -129,3 +129,14 @@ def test_SampleClock_boundaries():
     with pytest.raises(ValueError):
         clock.advance(1)
     assert clock.offset == 2**53 - 1
+
+
+def test_SampleClock_invariants():
+    clock = m.SampleClock(44100)
+    for _ in range(1000):
+        clock.advance(441)
+    assert clock.offset == 441000 and clock.seconds == 10
+    snapshot = clock.snapshot()
+    assert set(snapshot) == {"sample_rate", "offset"}
+    restored = m.SampleClock(snapshot["sample_rate"], snapshot["offset"])
+    assert restored.seconds == clock.seconds
