@@ -111,3 +111,24 @@ class RingBuffer:
         result = self.samples[:count].copy()
         self.samples = self.samples[count:].copy()
         return result
+
+
+class SampleClock:
+    """Track integer sample offsets, deriving seconds without accumulated drift."""
+
+    def __init__(self, rate: int, offset: int = 0):
+        self.rate = audio.sample_rate(rate)
+        self.offset = _count(offset, True, 2**53 - 1)
+
+    @property
+    def seconds(self) -> float:
+        return self.offset / self.rate
+
+    def advance(self, frames: int) -> tuple[int, int]:
+        _count(frames, True, 2**53 - 1)
+        stop = _count(self.offset + frames, True, 2**53 - 1)
+        start, self.offset = self.offset, stop
+        return start, stop
+
+    def snapshot(self) -> dict:
+        return {"sample_rate": self.rate, "offset": self.offset}

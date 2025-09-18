@@ -113,3 +113,9 @@ def test_RingBuffer_invariants():
     for count in range(4):
         buffer.append(np.arange(count))
         np.testing.assert_array_equal(buffer.read(count).ravel(), np.arange(count))
+
+
+def test_SampleClock_example():
+    clock = m.SampleClock(16000)
+    assert clock.advance(320) == (0, 320)
+    assert clock.seconds == 0.02
