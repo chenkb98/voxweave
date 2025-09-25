@@ -147,3 +147,15 @@ def test_JitterBuffer_example():
     assert buffer.push(1, b"b") == []
     assert buffer.push(0, b"a") == [b"a", b"b"]
     buffer.flush()
+
+
+def test_JitterBuffer_boundaries():
+    buffer = m.JitterBuffer(1)
+    buffer.push(2, b"c")
+    with pytest.raises(BufferError):
+        buffer.push(3, b"d")
+    with pytest.raises(ValueError):
+        buffer.push(2, b"c")
+    with pytest.raises(ValueError):
+        buffer.flush()
+    assert buffer.pending == {2: b"c"} and buffer.expected == 0
