@@ -140,3 +140,10 @@ def test_SampleClock_invariants():
     assert set(snapshot) == {"sample_rate", "offset"}
     restored = m.SampleClock(snapshot["sample_rate"], snapshot["offset"])
     assert restored.seconds == clock.seconds
+
+
+def test_JitterBuffer_example():
+    buffer = m.JitterBuffer()
+    assert buffer.push(1, b"b") == []
+    assert buffer.push(0, b"a") == [b"a", b"b"]
+    buffer.flush()

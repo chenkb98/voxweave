@@ -132,3 +132,35 @@ class SampleClock:
 
     def snapshot(self) -> dict:
         return {"sample_rate": self.rate, "offset": self.offset}
+
+
+class JitterBuffer:
+    """Release byte packets only when sequence numbers become contiguous."""
+
+    def __init__(self, capacity: int = 32, expected: int = 0):
+        self.capacity, self.expected = (
+            _count(capacity, maximum=4096),
+            _count(expected, True, 2**53 - 1),
+        )
+        self.pending: dict[int, bytes] = {}
+
+    def push(self, sequence: int, payload: bytes) -> list[bytes]:
+        _count(sequence, True, 2**53 - 1)
+        if not isinstance(payload, bytes) or len(payload) > 2000000:
+            raise ValueError("invalid byte packet")
+        if sequence < self.expected or sequence in self.pending:
+            raise ValueError("stale or duplicate sequence")
+        if len(self.pending) >= self.capacity and sequence != self.expected:
+            raise BufferError("reorder queue is full")
+        pending = dict(self.pending)
+        pending[sequence] = payload
+        expected, result = self.expected, []
+        while expected in pending:
+            result.append(pending.pop(expected))
+            expected += 1
+        self.pending, self.expected = pending, expected
+        return result
+
+    def flush(self) -> None:
+        if self.pending:
+            raise ValueError("stream has missing sequence numbers")
