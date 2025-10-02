@@ -159,3 +159,15 @@ def test_JitterBuffer_boundaries():
     with pytest.raises(ValueError):
         buffer.flush()
     assert buffer.pending == {2: b"c"} and buffer.expected == 0
+
+
+def test_JitterBuffer_invariants():
+    import itertools
+
+    for order in itertools.permutations(range(4)):
+        buffer, result = m.JitterBuffer(4), []
+        for i in order:
+            result.extend(buffer.push(i, bytes([i])))
+        buffer.flush()
+        assert result == [bytes([i]) for i in range(4)]
+        assert buffer.expected == 4 and buffer.pending == {}
