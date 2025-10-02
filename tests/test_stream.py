@@ -177,3 +177,14 @@ def test_EnergyTracker_example():
     tracker = m.EnergyTracker(0.5)
     assert tracker.feed([1, -1]) == 0.5
     assert tracker.feed([0]) == 0.25
+
+
+def test_EnergyTracker_boundaries():
+    for decay in [-1, 1, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.EnergyTracker(decay)
+    tracker = m.EnergyTracker(0.5)
+    tracker.feed([1])
+    with pytest.raises(ValueError):
+        tracker.feed([np.nan])
+    assert tracker.level == 0.5 and tracker.feed([]) == 0.5
