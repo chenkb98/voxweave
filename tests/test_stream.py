@@ -171,3 +171,9 @@ def test_JitterBuffer_invariants():
         buffer.flush()
         assert result == [bytes([i]) for i in range(4)]
         assert buffer.expected == 4 and buffer.pending == {}
+
+
+def test_EnergyTracker_example():
+    tracker = m.EnergyTracker(0.5)
+    assert tracker.feed([1, -1]) == 0.5
+    assert tracker.feed([0]) == 0.25

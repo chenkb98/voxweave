@@ -164,3 +164,21 @@ class JitterBuffer:
     def flush(self) -> None:
         if self.pending:
             raise ValueError("stream has missing sequence numbers")
+
+
+class EnergyTracker:
+    """Exponential smoothing of per-frame RMS amplitude for an offline VAD baseline."""
+
+    def __init__(self, decay: float = 0.8):
+        if not np.isfinite(decay) or not 0 <= decay < 1:
+            raise ValueError("decay must be in [0, 1)")
+        self.decay, self.level = float(decay), 0.0
+
+    def feed(self, samples: ArrayLike) -> float:
+        values = audio.as_audio(samples)
+        if len(values):
+            self.level = self.decay * self.level + (1 - self.decay) * audio.rms(values)
+        return self.level
+
+    def reset(self) -> None:
+        self.level = 0.0
