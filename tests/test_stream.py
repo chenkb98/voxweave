@@ -202,3 +202,11 @@ def test_EnergyTracker_invariants():
 def test_frame_event_example():
     event = m.frame_event([0, -1], 16000, 2, 320)
     assert event["frames"] == 2 and event["offset"] == 320 and event["sequence"] == 2
+
+
+def test_frame_event_boundaries():
+    for sequence, offset in [(-1, 0), (0, -1), (True, 0), (0, 1.5)]:
+        with pytest.raises(ValueError):
+            m.frame_event([0], 16000, sequence, offset)
+    with pytest.raises(ValueError):
+        m.frame_event([np.nan], 16000, 0, 0)
