@@ -182,3 +182,21 @@ class EnergyTracker:
 
     def reset(self) -> None:
         self.level = 0.0
+
+
+def frame_event(samples: ArrayLike, rate: int, sequence: int, offset: int) -> dict:
+    """Encode an audio frame with sample-based timing and transport-safe PCM."""
+    import base64
+
+    values, rate = audio.as_audio(samples), audio.sample_rate(rate)
+    _count(sequence, True, 2**53 - 1)
+    _count(offset, True, 2**53 - 1)
+    return {
+        "kind": "audio",
+        "sequence": sequence,
+        "offset": offset,
+        "sample_rate": rate,
+        "frames": len(values),
+        "channels": values.shape[1],
+        "pcm16": base64.b64encode(audio.pcm16_encode(values)).decode("ascii"),
+    }

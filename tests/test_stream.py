@@ -197,3 +197,8 @@ def test_EnergyTracker_invariants():
     tracker.reset()
     assert tracker.level == 0
     assert m.EnergyTracker(0).feed([1, -1]) == 1
+
+
+def test_frame_event_example():
+    event = m.frame_event([0, -1], 16000, 2, 320)
+    assert event["frames"] == 2 and event["offset"] == 320 and event["sequence"] == 2
