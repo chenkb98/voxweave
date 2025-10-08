@@ -188,3 +188,12 @@ def test_EnergyTracker_boundaries():
     with pytest.raises(ValueError):
         tracker.feed([np.nan])
     assert tracker.level == 0.5 and tracker.feed([]) == 0.5
+
+
+def test_EnergyTracker_invariants():
+    tracker = m.EnergyTracker(0.5)
+    levels = [tracker.feed([1]) for _ in range(20)]
+    assert all(a < b for a, b in zip(levels, levels[1:])) and levels[-1] < 1
+    tracker.reset()
+    assert tracker.level == 0
+    assert m.EnergyTracker(0).feed([1, -1]) == 1
