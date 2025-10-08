@@ -210,3 +210,23 @@ def test_frame_event_boundaries():
             m.frame_event([0], 16000, sequence, offset)
     with pytest.raises(ValueError):
         m.frame_event([np.nan], 16000, 0, 0)
+
+
+def test_frame_event_invariants():
+    import base64
+    from voxweave import audio
+
+    event = m.frame_event([[0, -1], [0.5, 0]], 8000, 0, 0)
+    assert set(event) == {
+        "kind",
+        "sequence",
+        "offset",
+        "sample_rate",
+        "frames",
+        "channels",
+        "pcm16",
+    }
+    np.testing.assert_array_equal(
+        audio.pcm16_decode(base64.b64decode(event["pcm16"]), event["channels"]), [[0, -1], [0.5, 0]]
+    )
+    assert m.frame_event([], 8000, 0, 0)["pcm16"] == ""
