@@ -19,3 +19,12 @@ def test_vad_config_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.vad_config(values)
+
+
+def test_vad_config_invariants():
+    value = m.vad_config()
+    assert set(value) == {"on_threshold", "off_threshold", "min_frames", "hangover"}
+    assert m.vad_config(value) == value
+    for field in value:
+        with pytest.raises(ValueError):
+            m.vad_config({field + "_typo": value[field]})
