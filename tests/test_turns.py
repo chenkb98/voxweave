@@ -44,3 +44,12 @@ def test_EnergyVAD_boundaries():
     assert vad.flush() == [] and vad.flush() == []
     with pytest.raises(RuntimeError):
         vad.feed(0.1)
+
+
+def test_EnergyVAD_invariants():
+    vad = m.EnergyVAD()
+    events = [event for level in [0.1, 0.1, 0.015, 0.005] for event in vad.feed(level)]
+    events += vad.flush()
+    assert events == [{"kind": "start", "frame": 0}, {"kind": "end", "frame": 3}]
+    vad = m.EnergyVAD()
+    assert vad.feed(0.1) == [] and vad.feed(0) == [] and vad.flush() == []
