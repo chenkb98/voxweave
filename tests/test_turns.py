@@ -34,3 +34,13 @@ def test_EnergyVAD_example():
     vad = m.EnergyVAD()
     events = [event for level in [0, 0.1, 0.1, 0, 0] for event in vad.feed(level)]
     assert events == [{"kind": "start", "frame": 1}, {"kind": "end", "frame": 3}]
+
+
+def test_EnergyVAD_boundaries():
+    vad = m.EnergyVAD()
+    with pytest.raises(ValueError):
+        vad.feed(np.nan)
+    assert vad.index == 0
+    assert vad.flush() == [] and vad.flush() == []
+    with pytest.raises(RuntimeError):
+        vad.feed(0.1)
