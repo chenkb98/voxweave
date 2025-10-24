@@ -28,3 +28,9 @@ def test_vad_config_invariants():
     for field in value:
         with pytest.raises(ValueError):
             m.vad_config({field + "_typo": value[field]})
+
+
+def test_EnergyVAD_example():
+    vad = m.EnergyVAD()
+    events = [event for level in [0, 0.1, 0.1, 0, 0] for event in vad.feed(level)]
+    assert events == [{"kind": "start", "frame": 1}, {"kind": "end", "frame": 3}]

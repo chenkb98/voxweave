@@ -28,3 +28,41 @@ def vad_config(values: dict | None = None) -> dict:
     _count(result["min_frames"], maximum=1000)
     _count(result["hangover"], maximum=1000)
     return result
+
+
+class EnergyVAD:
+    """Offline energy baseline with hysteresis, minimum speech and terminal flush."""
+
+    def __init__(self, settings: dict | None = None):
+        self.config = vad_config(settings)
+        self.index = self.run = self.silence = 0
+        self.start: int | None = None
+        self.closed = False
+
+    def feed(self, level: float) -> list[dict]:
+        if self.closed:
+            raise RuntimeError("VAD stream is closed")
+        if not np.isfinite(level) or level < 0:
+            raise ValueError("energy must be finite and nonnegative")
+        events = []
+        if self.start is None:
+            self.run = self.run + 1 if level >= self.config["on_threshold"] else 0
+            if self.run >= self.config["min_frames"]:
+                self.start = self.index - self.run + 1
+                events.append({"kind": "start", "frame": self.start})
+        else:
+            self.silence = self.silence + 1 if level <= self.config["off_threshold"] else 0
+            if self.silence >= self.config["hangover"]:
+                events.append({"kind": "end", "frame": self.index - self.silence + 1})
+                self.start, self.run, self.silence = None, 0, 0
+        self.index += 1
+        return events
+
+    def flush(self) -> list[dict]:
+        if self.closed:
+            return []
+        result = (
+            [{"kind": "end", "frame": self.index - self.silence}] if self.start is not None else []
+        )
+        self.closed = True
+        return result
