@@ -53,3 +53,7 @@ def test_EnergyVAD_invariants():
     assert events == [{"kind": "start", "frame": 0}, {"kind": "end", "frame": 3}]
     vad = m.EnergyVAD()
     assert vad.feed(0.1) == [] and vad.feed(0) == [] and vad.flush() == []
+
+
+def test_detect_turns_example():
+    assert m.detect_turns([0, 0, 0.1, 0.1, 0.1, 0.1, 0, 0, 0, 0], 2) == [{"start": 2, "end": 6}]

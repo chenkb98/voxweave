@@ -66,3 +66,20 @@ class EnergyVAD:
         )
         self.closed = True
         return result
+
+
+def detect_turns(samples: ArrayLike, size: int = 320, settings: dict | None = None) -> list[dict]:
+    """Detect half-open sample intervals using actual, unpadded tail frames."""
+    values, size = audio.as_audio(samples), _count(size)
+    vad, events = EnergyVAD(settings), []
+    for start in range(0, len(values), size):
+        events.extend(vad.feed(audio.rms(values[start : start + size])))
+    events.extend(vad.flush())
+    result, begin = [], None
+    for event in events:
+        if event["kind"] == "start":
+            begin = event["frame"] * size
+        elif begin is not None:
+            result.append({"start": begin, "end": min(len(values), event["frame"] * size)})
+            begin = None
+    return result
