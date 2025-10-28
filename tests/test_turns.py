@@ -57,3 +57,12 @@ def test_EnergyVAD_invariants():
 
 def test_detect_turns_example():
     assert m.detect_turns([0, 0, 0.1, 0.1, 0.1, 0.1, 0, 0, 0, 0], 2) == [{"start": 2, "end": 6}]
+
+
+def test_detect_turns_boundaries():
+    assert m.detect_turns([], 2) == []
+    assert m.detect_turns(np.zeros(10), 2) == []
+    with pytest.raises(ValueError):
+        m.detect_turns([1], 0)
+    with pytest.raises(ValueError):
+        m.detect_turns([np.nan], 2)
