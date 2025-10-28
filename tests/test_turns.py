@@ -66,3 +66,11 @@ def test_detect_turns_boundaries():
         m.detect_turns([1], 0)
     with pytest.raises(ValueError):
         m.detect_turns([np.nan], 2)
+
+
+def test_detect_turns_invariants():
+    assert m.detect_turns([0.1] * 5, 2) == [{"start": 0, "end": 5}]
+    for channels in [1, 2, 8]:
+        x = np.zeros((12, channels))
+        x[2:8] = 0.1
+        assert m.detect_turns(x, 2) == [{"start": 2, "end": 8}]
