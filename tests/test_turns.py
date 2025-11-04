@@ -74,3 +74,9 @@ def test_detect_turns_invariants():
         x = np.zeros((12, channels))
         x[2:8] = 0.1
         assert m.detect_turns(x, 2) == [{"start": 2, "end": 8}]
+
+
+def test_merge_turns_example():
+    assert m.merge_turns([{"start": 0, "end": 2}, {"start": 3, "end": 5}], 1) == [
+        {"start": 0, "end": 5}
+    ]

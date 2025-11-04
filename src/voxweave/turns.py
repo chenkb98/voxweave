@@ -83,3 +83,30 @@ def detect_turns(samples: ArrayLike, size: int = 320, settings: dict | None = No
             result.append({"start": begin, "end": min(len(values), event["frame"] * size)})
             begin = None
     return result
+
+
+def _intervals(turns: list[dict], length: int | None = None) -> list[dict]:
+    if not isinstance(turns, list):
+        raise ValueError("turns must be a list")
+    result, previous = [], 0
+    for turn in turns:
+        if not isinstance(turn, dict) or set(turn) != {"start", "end"}:
+            raise ValueError("invalid interval fields")
+        start, end = _count(turn["start"], True, 2**53 - 1), _count(turn["end"], True, 2**53 - 1)
+        if not previous <= start < end or (length is not None and end > length):
+            raise ValueError("intervals must be ordered, nonoverlapping and in bounds")
+        result.append({"start": start, "end": end})
+        previous = end
+    return result
+
+
+def merge_turns(turns: list[dict], max_gap: int) -> list[dict]:
+    """Merge ordered speech intervals separated by at most max_gap samples."""
+    values, max_gap = _intervals(turns), _count(max_gap, True)
+    result: list[dict] = []
+    for turn in values:
+        if result and turn["start"] - result[-1]["end"] <= max_gap:
+            result[-1]["end"] = turn["end"]
+        else:
+            result.append(turn.copy())
+    return result
