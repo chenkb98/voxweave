@@ -80,3 +80,16 @@ def test_merge_turns_example():
     assert m.merge_turns([{"start": 0, "end": 2}, {"start": 3, "end": 5}], 1) == [
         {"start": 0, "end": 5}
     ]
+
+
+def test_merge_turns_boundaries():
+    for turns in [
+        [{"start": 1, "end": 1}],
+        [{"start": -1, "end": 2}],
+        [{"start": 0, "end": 3}, {"start": 2, "end": 4}],
+        [{"start": 0, "end": 2, "extra": 1}],
+    ]:
+        with pytest.raises(ValueError):
+            m.merge_turns(turns, 1)
+    with pytest.raises(ValueError):
+        m.merge_turns([], -1)
