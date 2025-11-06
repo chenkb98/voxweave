@@ -93,3 +93,12 @@ def test_merge_turns_boundaries():
             m.merge_turns(turns, 1)
     with pytest.raises(ValueError):
         m.merge_turns([], -1)
+
+
+def test_merge_turns_invariants():
+    turns = [{"start": 0, "end": 2}, {"start": 4, "end": 6}, {"start": 10, "end": 12}]
+    for gap in range(6):
+        result = m.merge_turns(turns, gap)
+        assert m.merge_turns(result, gap) == result
+        assert len(result) <= len(turns)
+    assert turns[0]["end"] == 2
