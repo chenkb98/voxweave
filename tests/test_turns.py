@@ -124,3 +124,9 @@ def test_extract_turns_invariants():
     np.testing.assert_array_equal(np.concatenate(result), x)
     result[0][0, 0] = 99
     assert x[0, 0] == 0 and result[1][0, 0] == 4
+
+
+def test_frame_labels_example():
+    np.testing.assert_array_equal(
+        m.frame_labels(6, [{"start": 2, "end": 4}], 2), [False, True, False]
+    )

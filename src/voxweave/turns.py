@@ -117,3 +117,19 @@ def extract_turns(samples: ArrayLike, turns: list[dict]) -> list[NDArray[np.floa
     values = audio.as_audio(samples)
     intervals = _intervals(turns, len(values))
     return [audio.crop(values, turn["start"], turn["end"]) for turn in intervals]
+
+
+def frame_labels(length: int, turns: list[dict], size: int) -> NDArray[np.bool_]:
+    """Mark frames with any overlap against speech sample intervals."""
+    length, size = _count(length, True), _count(size)
+    intervals = _intervals(turns, length)
+    return np.array(
+        [
+            any(
+                turn["start"] < min(start + size, length) and turn["end"] > start
+                for turn in intervals
+            )
+            for start in range(0, length, size)
+        ],
+        dtype=bool,
+    )
