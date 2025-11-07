@@ -130,3 +130,11 @@ def test_frame_labels_example():
     np.testing.assert_array_equal(
         m.frame_labels(6, [{"start": 2, "end": 4}], 2), [False, True, False]
     )
+
+
+def test_frame_labels_boundaries():
+    assert m.frame_labels(0, [], 2).shape == (0,)
+    with pytest.raises(ValueError):
+        m.frame_labels(1, [{"start": 0, "end": 2}], 1)
+    with pytest.raises(ValueError):
+        m.frame_labels(2, [], 0)
