@@ -107,3 +107,11 @@ def test_merge_turns_invariants():
 def test_extract_turns_example():
     result = m.extract_turns([1, 2, 3, 4], [{"start": 1, "end": 3}])
     np.testing.assert_array_equal(result[0].ravel(), [2, 3])
+
+
+def test_extract_turns_boundaries():
+    assert m.extract_turns([], []) == []
+    with pytest.raises(ValueError):
+        m.extract_turns([1], [{"start": 0, "end": 2}])
+    with pytest.raises(ValueError):
+        m.extract_turns([np.nan], [])
