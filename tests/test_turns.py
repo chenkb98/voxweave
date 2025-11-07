@@ -102,3 +102,8 @@ def test_merge_turns_invariants():
         assert m.merge_turns(result, gap) == result
         assert len(result) <= len(turns)
     assert turns[0]["end"] == 2
+
+
+def test_extract_turns_example():
+    result = m.extract_turns([1, 2, 3, 4], [{"start": 1, "end": 3}])
+    np.testing.assert_array_equal(result[0].ravel(), [2, 3])

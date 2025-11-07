@@ -110,3 +110,10 @@ def merge_turns(turns: list[dict], max_gap: int) -> list[dict]:
         else:
             result.append(turn.copy())
     return result
+
+
+def extract_turns(samples: ArrayLike, turns: list[dict]) -> list[NDArray[np.float64]]:
+    """Copy each validated speech interval from the original audio."""
+    values = audio.as_audio(samples)
+    intervals = _intervals(turns, len(values))
+    return [audio.crop(values, turn["start"], turn["end"]) for turn in intervals]
