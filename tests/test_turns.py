@@ -115,3 +115,12 @@ def test_extract_turns_boundaries():
         m.extract_turns([1], [{"start": 0, "end": 2}])
     with pytest.raises(ValueError):
         m.extract_turns([np.nan], [])
+
+
+def test_extract_turns_invariants():
+    x = np.arange(12).reshape(6, 2)
+    turns = [{"start": 0, "end": 2}, {"start": 2, "end": 6}]
+    result = m.extract_turns(x, turns)
+    np.testing.assert_array_equal(np.concatenate(result), x)
+    result[0][0, 0] = 99
+    assert x[0, 0] == 0 and result[1][0, 0] == 4
