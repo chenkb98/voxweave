@@ -138,3 +138,13 @@ def test_frame_labels_boundaries():
         m.frame_labels(1, [{"start": 0, "end": 2}], 1)
     with pytest.raises(ValueError):
         m.frame_labels(2, [], 0)
+
+
+def test_frame_labels_invariants():
+    for length in range(1, 10):
+        for size in range(1, 5):
+            np.testing.assert_array_equal(
+                m.frame_labels(length, [{"start": 0, "end": length}], size),
+                np.ones((length + size - 1) // size, dtype=bool),
+            )
+    np.testing.assert_array_equal(m.frame_labels(4, [{"start": 1, "end": 2}], 2), [True, False])
