@@ -15,3 +15,11 @@ def test_text_message_boundaries():
         with pytest.raises(ValueError):
             m.text_message(role, text)
     assert m.text_message("assistant", "")["content"][0]["text"] == ""
+
+
+def test_text_message_invariants():
+    for role in ["system", "user", "assistant"]:
+        result = m.text_message(role, "语音\n🎵")
+        assert set(result) == {"role", "content"}
+        assert set(result["content"][0]) == {"type", "text"}
+        assert result["role"] == role and result["content"][0]["text"] == "语音\n🎵"
