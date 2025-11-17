@@ -48,3 +48,8 @@ def test_audio_message_invariants():
     samples, rate = audio.wav_decode(base64.b64decode(result["content"][0]["wav"]))
     assert rate == 8000 and samples.shape == (2, 2)
     np.testing.assert_array_equal(samples, [[0, -1], [0.5, 0]])
+
+
+def test_validate_message_example():
+    message = m.audio_message([0], 8000, "test")
+    assert m.validate_message(message) == message
