@@ -23,3 +23,8 @@ def test_text_message_invariants():
         assert set(result) == {"role", "content"}
         assert set(result["content"][0]) == {"type", "text"}
         assert result["role"] == role and result["content"][0]["text"] == "语音\n🎵"
+
+
+def test_audio_message_example():
+    result = m.audio_message([0, 0.5], 16000, "听到了什么？")
+    assert [x["type"] for x in result["content"]] == ["audio", "text"]
