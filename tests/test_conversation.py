@@ -28,3 +28,13 @@ def test_text_message_invariants():
 def test_audio_message_example():
     result = m.audio_message([0, 0.5], 16000, "听到了什么？")
     assert [x["type"] for x in result["content"]] == ["audio", "text"]
+
+
+def test_audio_message_boundaries():
+    with pytest.raises(ValueError):
+        m.audio_message([0], 0)
+    with pytest.raises(ValueError):
+        m.audio_message([np.nan], 16000)
+    with pytest.raises(ValueError):
+        m.audio_message([0], 16000, None)
+    assert len(m.audio_message([], 16000)["content"]) == 1
