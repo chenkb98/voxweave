@@ -53,3 +53,18 @@ def test_audio_message_invariants():
 def test_validate_message_example():
     message = m.audio_message([0], 8000, "test")
     assert m.validate_message(message) == message
+
+
+def test_validate_message_boundaries():
+    for value in [
+        {},
+        {"role": "user", "content": []},
+        {"role": "tool", "content": [{"type": "text", "text": "x"}]},
+        {"role": "user", "content": [{"type": "audio", "wav": "!"}]},
+    ]:
+        with pytest.raises(ValueError):
+            m.validate_message(value)
+    value = m.audio_message([0], 8000)
+    value["role"] = "assistant"
+    with pytest.raises(ValueError):
+        m.validate_message(value)
