@@ -38,3 +38,13 @@ def test_audio_message_boundaries():
     with pytest.raises(ValueError):
         m.audio_message([0], 16000, None)
     assert len(m.audio_message([], 16000)["content"]) == 1
+
+
+def test_audio_message_invariants():
+    import base64
+    from voxweave import audio
+
+    result = m.audio_message([[0, -1], [0.5, 0]], 8000)
+    samples, rate = audio.wav_decode(base64.b64decode(result["content"][0]["wav"]))
+    assert rate == 8000 and samples.shape == (2, 2)
+    np.testing.assert_array_equal(samples, [[0, -1], [0.5, 0]])
