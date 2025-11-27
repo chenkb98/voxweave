@@ -82,3 +82,12 @@ def test_validate_message_invariants():
             m.validate_message(candidate)
     with pytest.raises(ValueError):
         m.validate_message(dict(value, extra=1))
+
+
+def test_validate_conversation_example():
+    messages = [
+        m.text_message("system", "local"),
+        m.text_message("user", "hi"),
+        m.text_message("assistant", "hello"),
+    ]
+    assert m.validate_conversation(messages) == messages

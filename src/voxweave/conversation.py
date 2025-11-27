@@ -61,3 +61,20 @@ def validate_message(message: dict) -> dict:
         else:
             raise ValueError("unsupported content schema or audio role")
     return copy.deepcopy(message)
+
+
+def validate_conversation(messages: list[dict]) -> list[dict]:
+    """Validate optional leading system context followed by alternating turns."""
+    if not isinstance(messages, list) or not 1 <= len(messages) <= 200:
+        raise ValueError("conversation needs 1..200 messages")
+    result = [validate_message(value) for value in messages]
+    expected = "user"
+    for index, message in enumerate(result):
+        if message["role"] == "system":
+            if index != 0:
+                raise ValueError("system context must be first")
+        else:
+            if message["role"] != expected:
+                raise ValueError("user and assistant turns must alternate")
+            expected = "assistant" if expected == "user" else "user"
+    return result
