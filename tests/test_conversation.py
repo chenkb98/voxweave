@@ -68,3 +68,17 @@ def test_validate_message_boundaries():
     value["role"] = "assistant"
     with pytest.raises(ValueError):
         m.validate_message(value)
+
+
+def test_validate_message_invariants():
+    value = m.audio_message([0], 8000, "hello")
+    copy = m.validate_message(value)
+    copy["content"][-1]["text"] = "changed"
+    assert value["content"][-1]["text"] == "hello"
+    for key in value:
+        candidate = dict(value)
+        candidate.pop(key)
+        with pytest.raises(ValueError):
+            m.validate_message(candidate)
+    with pytest.raises(ValueError):
+        m.validate_message(dict(value, extra=1))
