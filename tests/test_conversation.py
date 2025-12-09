@@ -102,3 +102,15 @@ def test_validate_conversation_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.validate_conversation(messages)
+
+
+def test_validate_conversation_invariants():
+    for count in range(1, 10):
+        messages = [
+            m.text_message("user" if i % 2 == 0 else "assistant", str(i)) for i in range(count)
+        ]
+        assert m.validate_conversation(messages) == messages
+        assert (
+            m.validate_conversation([m.text_message("system", "context")] + messages)[1:]
+            == messages
+        )
