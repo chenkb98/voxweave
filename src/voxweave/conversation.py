@@ -78,3 +78,10 @@ def validate_conversation(messages: list[dict]) -> list[dict]:
                 raise ValueError("user and assistant turns must alternate")
             expected = "assistant" if expected == "user" else "user"
     return result
+
+
+def append_message(messages: list[dict], message: dict) -> list[dict]:
+    """Append a validated turn to a copied conversation, including an empty start."""
+    if not isinstance(messages, list):
+        raise ValueError("history must be a list")
+    return validate_conversation([*messages, message])

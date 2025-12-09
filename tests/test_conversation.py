@@ -114,3 +114,8 @@ def test_validate_conversation_invariants():
             m.validate_conversation([m.text_message("system", "context")] + messages)[1:]
             == messages
         )
+
+
+def test_append_message_example():
+    history = m.append_message([], m.text_message("user", "hi"))
+    assert len(m.append_message(history, m.text_message("assistant", "hello"))) == 2
