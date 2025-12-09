@@ -91,3 +91,14 @@ def test_validate_conversation_example():
         m.text_message("assistant", "hello"),
     ]
     assert m.validate_conversation(messages) == messages
+
+
+def test_validate_conversation_boundaries():
+    for messages in [
+        [],
+        [m.text_message("assistant", "x")],
+        [m.text_message("user", "a"), m.text_message("user", "b")],
+        [m.text_message("user", "x"), m.text_message("system", "x")],
+    ]:
+        with pytest.raises(ValueError):
+            m.validate_conversation(messages)
