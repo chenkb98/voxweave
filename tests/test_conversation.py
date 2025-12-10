@@ -119,3 +119,12 @@ def test_validate_conversation_invariants():
 def test_append_message_example():
     history = m.append_message([], m.text_message("user", "hi"))
     assert len(m.append_message(history, m.text_message("assistant", "hello"))) == 2
+
+
+def test_append_message_boundaries():
+    history = [m.text_message("user", "hi")]
+    with pytest.raises(ValueError):
+        m.append_message(history, m.text_message("user", "again"))
+    assert len(history) == 1
+    with pytest.raises(ValueError):
+        m.append_message(None, m.text_message("user", "hi"))
