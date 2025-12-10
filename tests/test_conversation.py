@@ -128,3 +128,11 @@ def test_append_message_boundaries():
     assert len(history) == 1
     with pytest.raises(ValueError):
         m.append_message(None, m.text_message("user", "hi"))
+
+
+def test_append_message_invariants():
+    message = m.text_message("user", "hello")
+    history = m.append_message([], message)
+    result = m.append_message(history, m.text_message("assistant", "world"))
+    result[0]["content"][0]["text"] = "changed"
+    assert history[0]["content"][0]["text"] == message["content"][0]["text"] == "hello"
