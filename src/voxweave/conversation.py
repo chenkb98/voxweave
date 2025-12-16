@@ -95,3 +95,17 @@ def replace_transcript(message: dict, text: str) -> dict:
     text_part = text_message("user", text)["content"]
     value["content"] = [part for part in value["content"] if part["type"] != "text"] + text_part
     return validate_message(value)
+
+
+def apply_delta(state: dict, update: dict) -> dict:
+    """Apply the next full-text revision and make finalization terminal."""
+    for value in [state, update]:
+        if not isinstance(value, dict) or set(value) != {"text", "revision", "final"}:
+            raise ValueError("invalid transcript update fields")
+        text_message("user", value["text"])
+        _count(value["revision"], True, 2**53 - 1)
+        if type(value["final"]) is not bool:
+            raise ValueError("final must be boolean")
+    if state["final"] or update["revision"] != state["revision"] + 1:
+        raise ValueError("stale, skipped or post-final revision")
+    return update.copy()

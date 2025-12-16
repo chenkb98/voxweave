@@ -157,3 +157,9 @@ def test_replace_transcript_invariants():
     assert revised["content"][0] == original["content"][0]
     assert original["content"][-1]["text"] == "a"
     assert m.replace_transcript(revised, "ab") == revised
+
+
+def test_apply_delta_example():
+    state = {"text": "", "revision": 0, "final": False}
+    update = {"text": "你好", "revision": 1, "final": False}
+    assert m.apply_delta(state, update) == update
