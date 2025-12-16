@@ -85,3 +85,13 @@ def append_message(messages: list[dict], message: dict) -> list[dict]:
     if not isinstance(messages, list):
         raise ValueError("history must be a list")
     return validate_conversation([*messages, message])
+
+
+def replace_transcript(message: dict, text: str) -> dict:
+    """Replace text segments while preserving the user's original audio."""
+    value = validate_message(message)
+    if value["role"] != "user":
+        raise ValueError("only user transcripts may be revised")
+    text_part = text_message("user", text)["content"]
+    value["content"] = [part for part in value["content"] if part["type"] != "text"] + text_part
+    return validate_message(value)

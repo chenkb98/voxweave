@@ -136,3 +136,8 @@ def test_append_message_invariants():
     result = m.append_message(history, m.text_message("assistant", "world"))
     result[0]["content"][0]["text"] = "changed"
     assert history[0]["content"][0]["text"] == message["content"][0]["text"] == "hello"
+
+
+def test_replace_transcript_example():
+    result = m.replace_transcript(m.audio_message([0], 8000, "hel"), "hello")
+    assert result["content"][-1]["text"] == "hello" and result["content"][0]["type"] == "audio"
