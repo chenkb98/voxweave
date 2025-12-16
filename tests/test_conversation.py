@@ -141,3 +141,11 @@ def test_append_message_invariants():
 def test_replace_transcript_example():
     result = m.replace_transcript(m.audio_message([0], 8000, "hel"), "hello")
     assert result["content"][-1]["text"] == "hello" and result["content"][0]["type"] == "audio"
+
+
+def test_replace_transcript_boundaries():
+    with pytest.raises(ValueError):
+        m.replace_transcript(m.text_message("assistant", "x"), "y")
+    with pytest.raises(ValueError):
+        m.replace_transcript(m.text_message("user", "x"), None)
+    assert m.replace_transcript(m.text_message("user", "x"), "")["content"][0]["text"] == ""
