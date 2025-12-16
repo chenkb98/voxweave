@@ -163,3 +163,15 @@ def test_apply_delta_example():
     state = {"text": "", "revision": 0, "final": False}
     update = {"text": "你好", "revision": 1, "final": False}
     assert m.apply_delta(state, update) == update
+
+
+def test_apply_delta_boundaries():
+    state = {"text": "a", "revision": 1, "final": False}
+    for update in [
+        {"text": "b", "revision": 1, "final": False},
+        {"text": "b", "revision": 3, "final": False},
+        {"text": "b", "revision": 2, "final": 1},
+    ]:
+        with pytest.raises(ValueError):
+            m.apply_delta(state, update)
+    assert state["text"] == "a"
