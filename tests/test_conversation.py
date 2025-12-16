@@ -149,3 +149,11 @@ def test_replace_transcript_boundaries():
     with pytest.raises(ValueError):
         m.replace_transcript(m.text_message("user", "x"), None)
     assert m.replace_transcript(m.text_message("user", "x"), "")["content"][0]["text"] == ""
+
+
+def test_replace_transcript_invariants():
+    original = m.audio_message([0, 0.5], 16000, "a")
+    revised = m.replace_transcript(original, "ab")
+    assert revised["content"][0] == original["content"][0]
+    assert original["content"][-1]["text"] == "a"
+    assert m.replace_transcript(revised, "ab") == revised
