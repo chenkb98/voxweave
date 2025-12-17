@@ -184,3 +184,8 @@ def test_apply_delta_invariants():
     assert state == {"text": "hello", "revision": 3, "final": True}
     with pytest.raises(ValueError):
         m.apply_delta(state, {"text": "x", "revision": 4, "final": True})
+
+
+def test_truncate_context_example():
+    history = [m.text_message("user" if i % 2 == 0 else "assistant", str(i)) for i in range(6)]
+    assert [x["content"][0]["text"] for x in m.truncate_context(history, 1)] == ["4", "5"]

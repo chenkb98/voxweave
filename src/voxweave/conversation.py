@@ -109,3 +109,16 @@ def apply_delta(state: dict, update: dict) -> dict:
     if state["final"] or update["revision"] != state["revision"] + 1:
         raise ValueError("stale, skipped or post-final revision")
     return update.copy()
+
+
+def truncate_context(messages: list[dict], max_turns: int) -> list[dict]:
+    """Retain recent complete user-led groups while preserving system context."""
+    values, max_turns = validate_conversation(messages), _count(max_turns, maximum=100)
+    system = values[:1] if values[0]["role"] == "system" else []
+    groups: list[list[dict]] = []
+    for message in values[len(system) :]:
+        if message["role"] == "user":
+            groups.append([message])
+        else:
+            groups[-1].append(message)
+    return system + [message for group in groups[-max_turns:] for message in group]
