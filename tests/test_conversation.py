@@ -175,3 +175,12 @@ def test_apply_delta_boundaries():
         with pytest.raises(ValueError):
             m.apply_delta(state, update)
     assert state["text"] == "a"
+
+
+def test_apply_delta_invariants():
+    state = {"text": "", "revision": 0, "final": False}
+    for revision, text in enumerate(["h", "he", "hello"], 1):
+        state = m.apply_delta(state, {"text": text, "revision": revision, "final": revision == 3})
+    assert state == {"text": "hello", "revision": 3, "final": True}
+    with pytest.raises(ValueError):
+        m.apply_delta(state, {"text": "x", "revision": 4, "final": True})
