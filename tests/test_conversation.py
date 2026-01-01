@@ -196,3 +196,14 @@ def test_truncate_context_boundaries():
         m.truncate_context([m.text_message("user", "x")], 0)
     system = [m.text_message("system", "instructions")]
     assert m.truncate_context(system, 1) == system
+
+
+def test_truncate_context_invariants():
+    history = [m.text_message("system", "context")] + [
+        m.text_message("user" if i % 2 == 0 else "assistant", str(i)) for i in range(7)
+    ]
+    for limit in range(1, 5):
+        result = m.truncate_context(history, limit)
+        assert result[0]["role"] == "system" and result[-1]["content"][0]["text"] == "6"
+        assert m.truncate_context(result, limit) == result
+        assert m.validate_conversation(result) == result
