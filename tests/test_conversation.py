@@ -189,3 +189,10 @@ def test_apply_delta_invariants():
 def test_truncate_context_example():
     history = [m.text_message("user" if i % 2 == 0 else "assistant", str(i)) for i in range(6)]
     assert [x["content"][0]["text"] for x in m.truncate_context(history, 1)] == ["4", "5"]
+
+
+def test_truncate_context_boundaries():
+    with pytest.raises(ValueError):
+        m.truncate_context([m.text_message("user", "x")], 0)
+    system = [m.text_message("system", "instructions")]
+    assert m.truncate_context(system, 1) == system
