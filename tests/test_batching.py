@@ -42,3 +42,11 @@ def test_attention_mask_boundaries():
     with pytest.raises(ValueError):
         m.attention_mask([2], 1)
     assert m.attention_mask(np.array([], dtype=int), 3).shape == (0, 3)
+
+
+def test_attention_mask_invariants():
+    for width in range(1, 12):
+        lengths = np.arange(width + 1)
+        mask = m.attention_mask(lengths, width)
+        np.testing.assert_array_equal(mask.sum(axis=1), lengths)
+        assert np.all(np.diff(mask.astype(int), axis=1) <= 0)
