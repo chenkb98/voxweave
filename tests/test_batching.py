@@ -17,3 +17,13 @@ def test_pad_audio_batch_boundaries():
     with pytest.raises(ValueError):
         m.pad_audio_batch([[np.nan]])
     assert m.pad_audio_batch([[], []])["samples"].shape == (2, 0, 1)
+
+
+def test_pad_audio_batch_invariants():
+    clips = [np.arange(size) for size in range(7)]
+    result = m.pad_audio_batch(clips)
+    assert set(result) == {"samples", "lengths", "mask"}
+    for i, clip in enumerate(clips):
+        np.testing.assert_array_equal(result["samples"][i, result["mask"][i], 0], clip)
+        assert result["mask"][i].sum() == result["lengths"][i] == len(clip)
+        assert np.all(result["samples"][i, ~result["mask"][i]] == 0)
