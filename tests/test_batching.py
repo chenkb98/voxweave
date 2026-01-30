@@ -27,3 +27,9 @@ def test_pad_audio_batch_invariants():
         np.testing.assert_array_equal(result["samples"][i, result["mask"][i], 0], clip)
         assert result["mask"][i].sum() == result["lengths"][i] == len(clip)
         assert np.all(result["samples"][i, ~result["mask"][i]] == 0)
+
+
+def test_attention_mask_example():
+    np.testing.assert_array_equal(
+        m.attention_mask([0, 2, 1]), [[False, False], [True, True], [True, False]]
+    )

@@ -29,3 +29,15 @@ def pad_audio_batch(clips: list[ArrayLike]) -> dict:
         "lengths": lengths,
         "mask": np.arange(maximum)[None, :] < lengths[:, None],
     }
+
+
+def attention_mask(lengths: ArrayLike, maximum: int | None = None) -> NDArray[np.bool_]:
+    """Build a boolean sequence mask without accepting fractional lengths."""
+    values = np.asarray(lengths)
+    if values.dtype.kind not in "iu" or values.ndim != 1 or np.any(values < 0):
+        raise ValueError("lengths must be a nonnegative integer vector")
+    required = int(values.max(initial=0))
+    maximum = required if maximum is None else _count(maximum, True)
+    if maximum < required or len(values) * maximum > 10000000:
+        raise ValueError("invalid mask width or allocation")
+    return np.arange(maximum)[None, :] < values[:, None]
