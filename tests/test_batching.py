@@ -33,3 +33,12 @@ def test_attention_mask_example():
     np.testing.assert_array_equal(
         m.attention_mask([0, 2, 1]), [[False, False], [True, True], [True, False]]
     )
+
+
+def test_attention_mask_boundaries():
+    for lengths in [[-1], [1.5], [True], [[1]]]:
+        with pytest.raises(ValueError):
+            m.attention_mask(lengths)
+    with pytest.raises(ValueError):
+        m.attention_mask([2], 1)
+    assert m.attention_mask(np.array([], dtype=int), 3).shape == (0, 3)
