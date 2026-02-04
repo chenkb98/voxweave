@@ -50,3 +50,7 @@ def test_attention_mask_invariants():
         mask = m.attention_mask(lengths, width)
         np.testing.assert_array_equal(mask.sum(axis=1), lengths)
         assert np.all(np.diff(mask.astype(int), axis=1) <= 0)
+
+
+def test_pack_tokens_example():
+    np.testing.assert_array_equal(m.pack_tokens([[1, 2], [3, 0]], 4), [1, 6, 3, 4])
