@@ -61,3 +61,12 @@ def test_pack_tokens_boundaries():
         with pytest.raises(ValueError):
             m.pack_tokens(values, 4)
     assert m.pack_tokens(np.empty((0, 2), dtype=int), 4).shape == (0,)
+
+
+def test_pack_tokens_invariants():
+    for books in range(1, 8):
+        tokens = np.arange(5 * books).reshape(5, books) % 8
+        packed = m.pack_tokens(tokens, 8).reshape(5, books)
+        for book in range(books):
+            assert np.all((packed[:, book] >= book * 8) & (packed[:, book] < (book + 1) * 8))
+            np.testing.assert_array_equal(packed[:, book] % 8, tokens[:, book])
