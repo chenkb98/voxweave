@@ -54,3 +54,10 @@ def test_attention_mask_invariants():
 
 def test_pack_tokens_example():
     np.testing.assert_array_equal(m.pack_tokens([[1, 2], [3, 0]], 4), [1, 6, 3, 4])
+
+
+def test_pack_tokens_boundaries():
+    for values in [[[4]], [[-1]], [[1.5]], [[True]], [1, 2], np.empty((2, 0), dtype=int)]:
+        with pytest.raises(ValueError):
+            m.pack_tokens(values, 4)
+    assert m.pack_tokens(np.empty((0, 2), dtype=int), 4).shape == (0,)
