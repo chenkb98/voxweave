@@ -92,3 +92,7 @@ def test_unpack_tokens_invariants():
             np.testing.assert_array_equal(
                 m.pack_tokens(m.unpack_tokens(packed, books, vocabulary), vocabulary), packed
             )
+
+
+def test_token_intervals_example():
+    np.testing.assert_allclose(m.token_intervals(2, 320, 16000), [[0, 0.02], [0.02, 0.04]])

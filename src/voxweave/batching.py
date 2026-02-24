@@ -68,3 +68,15 @@ def unpack_tokens(packed: ArrayLike, codebooks: int, vocabulary: int = 1024) -> 
     if np.any(matrix < offsets) or np.any(matrix >= offsets + vocabulary):
         raise ValueError("token belongs to the wrong codebook")
     return matrix - offsets
+
+
+def token_intervals(
+    count: int, samples_per_token: int, rate: int, offset: int = 0
+) -> NDArray[np.float64]:
+    """Map fixed-stride audio tokens to contiguous half-open time intervals."""
+    count, stride = _count(count, True), _count(samples_per_token)
+    rate, offset = audio.sample_rate(rate), _count(offset, True, 2**53 - 1)
+    _count(offset + count * stride, True, 2**53 - 1)
+    starts = (offset + np.arange(count, dtype=np.int64) * stride) / rate
+    ends = (offset + (np.arange(count, dtype=np.int64) + 1) * stride) / rate
+    return np.column_stack([starts, ends])
