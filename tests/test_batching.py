@@ -70,3 +70,7 @@ def test_pack_tokens_invariants():
         for book in range(books):
             assert np.all((packed[:, book] >= book * 8) & (packed[:, book] < (book + 1) * 8))
             np.testing.assert_array_equal(packed[:, book] % 8, tokens[:, book])
+
+
+def test_unpack_tokens_example():
+    np.testing.assert_array_equal(m.unpack_tokens([1, 6, 3, 4], 2, 4), [[1, 2], [3, 0]])

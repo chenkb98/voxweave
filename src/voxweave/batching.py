@@ -55,3 +55,16 @@ def pack_tokens(tokens: ArrayLike, vocabulary: int = 1024) -> NDArray[np.int64]:
     ):
         raise ValueError("tokens must be bounded integer (frames, codebooks)")
     return (values.astype(np.int64) + np.arange(values.shape[1]) * vocabulary).ravel()
+
+
+def unpack_tokens(packed: ArrayLike, codebooks: int, vocabulary: int = 1024) -> NDArray[np.int64]:
+    """Invert token packing and reject tokens in the wrong codebook position."""
+    values = np.asarray(packed)
+    codebooks, vocabulary = _count(codebooks, maximum=16), _count(vocabulary, maximum=1000000)
+    if values.dtype.kind not in "iu" or values.ndim != 1 or len(values) % codebooks:
+        raise ValueError("invalid packed token shape")
+    matrix = values.astype(np.int64).reshape(-1, codebooks)
+    offsets = np.arange(codebooks) * vocabulary
+    if np.any(matrix < offsets) or np.any(matrix >= offsets + vocabulary):
+        raise ValueError("token belongs to the wrong codebook")
+    return matrix - offsets
