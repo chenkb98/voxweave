@@ -81,3 +81,14 @@ def test_unpack_tokens_boundaries():
         with pytest.raises(ValueError):
             m.unpack_tokens(values, books, 4)
     assert m.unpack_tokens(np.array([], dtype=int), 2).shape == (0, 2)
+
+
+def test_unpack_tokens_invariants():
+    for vocabulary in [1, 4, 17]:
+        for books in range(1, 9):
+            tokens = np.arange(7 * books).reshape(7, books) % vocabulary
+            packed = m.pack_tokens(tokens, vocabulary)
+            np.testing.assert_array_equal(m.unpack_tokens(packed, books, vocabulary), tokens)
+            np.testing.assert_array_equal(
+                m.pack_tokens(m.unpack_tokens(packed, books, vocabulary), vocabulary), packed
+            )
