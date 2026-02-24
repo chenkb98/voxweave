@@ -74,3 +74,10 @@ def test_pack_tokens_invariants():
 
 def test_unpack_tokens_example():
     np.testing.assert_array_equal(m.unpack_tokens([1, 6, 3, 4], 2, 4), [[1, 2], [3, 0]])
+
+
+def test_unpack_tokens_boundaries():
+    for values, books in [([1], 2), ([1, 2], 2), ([1.5], 1), ([-1], 1), ([True], 1)]:
+        with pytest.raises(ValueError):
+            m.unpack_tokens(values, books, 4)
+    assert m.unpack_tokens(np.array([], dtype=int), 2).shape == (0, 2)
