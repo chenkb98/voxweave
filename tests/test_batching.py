@@ -105,3 +105,10 @@ def test_token_intervals_boundaries():
             m.token_intervals(*args)
     with pytest.raises(ValueError):
         m.token_intervals(1, 1, 8000, 2**53 - 1)
+
+
+def test_token_intervals_invariants():
+    values = m.token_intervals(100, 441, 44100, 882)
+    np.testing.assert_allclose(values[:, 1] - values[:, 0], 0.01)
+    np.testing.assert_array_equal(values[:-1, 1], values[1:, 0])
+    assert values[0, 0] == 0.02 and values[-1, 1] == 1.02
