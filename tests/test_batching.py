@@ -96,3 +96,12 @@ def test_unpack_tokens_invariants():
 
 def test_token_intervals_example():
     np.testing.assert_allclose(m.token_intervals(2, 320, 16000), [[0, 0.02], [0.02, 0.04]])
+
+
+def test_token_intervals_boundaries():
+    assert m.token_intervals(0, 320, 16000).shape == (0, 2)
+    for args in [(-1, 1, 8000), (1, 0, 8000), (1, 1, 0)]:
+        with pytest.raises(ValueError):
+            m.token_intervals(*args)
+    with pytest.raises(ValueError):
+        m.token_intervals(1, 1, 8000, 2**53 - 1)
