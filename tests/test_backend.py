@@ -25,3 +25,14 @@ def test_model_request_boundaries():
             m.model_request(history, values)
     with pytest.raises(ValueError):
         m.model_request(history + [conversation.text_message("assistant", "world")])
+
+
+def test_model_request_invariants():
+    from voxweave import conversation
+
+    history = [conversation.audio_message([0], 8000)]
+    request = m.model_request(history)
+    assert set(request) == {"messages", "generation"}
+    assert set(request["generation"]) == {"max_tokens", "temperature", "seed"}
+    request["messages"][0]["content"][0]["wav"] = "changed"
+    assert history[0]["content"][0]["wav"] != "changed"
