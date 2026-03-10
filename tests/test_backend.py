@@ -36,3 +36,12 @@ def test_model_request_invariants():
     assert set(request["generation"]) == {"max_tokens", "temperature", "seed"}
     request["messages"][0]["content"][0]["wav"] = "changed"
     assert history[0]["content"][0]["wav"] != "changed"
+
+
+def test_offline_response_example():
+    from voxweave import conversation
+
+    response = m.offline_response(m.model_request([conversation.audio_message([0] * 8, 8000)]))
+    assert (
+        response == "offline test backend: audio_segments=1; duration_s=0.001000; text_characters=0"
+    )

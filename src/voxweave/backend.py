@@ -30,3 +30,21 @@ def model_request(messages: list[dict], generation: dict | None = None) -> dict:
     ):
         raise ValueError("invalid temperature")
     return {"messages": history, "generation": settings}
+
+
+def offline_response(request: dict) -> str:
+    """Return deterministic audio diagnostics, explicitly labeled as a test backend."""
+    import base64
+
+    if not isinstance(request, dict) or set(request) != {"messages", "generation"}:
+        raise ValueError("invalid request fields")
+    value = model_request(request["messages"], request["generation"])
+    count, seconds, characters = 0, 0.0, 0
+    for part in value["messages"][-1]["content"]:
+        if part["type"] == "text":
+            characters += len(part["text"])
+        else:
+            samples, rate = audio.wav_decode(base64.b64decode(part["wav"], validate=True))
+            count += 1
+            seconds += audio.duration(samples, rate)
+    return f"offline test backend: audio_segments={count}; duration_s={seconds:.6f}; text_characters={characters}"
