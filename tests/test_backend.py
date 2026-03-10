@@ -55,3 +55,14 @@ def test_offline_response_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.offline_response(request)
+
+
+def test_offline_response_invariants():
+    from voxweave import conversation
+
+    for text in ["", "hello", "你好🎵"]:
+        request = m.model_request([conversation.text_message("user", text)])
+        response = m.offline_response(request)
+        assert response.endswith(f"text_characters={len(text)}")
+        assert response == m.offline_response(request)
+        assert response.startswith("offline test backend:")
