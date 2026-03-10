@@ -45,3 +45,13 @@ def test_offline_response_example():
     assert (
         response == "offline test backend: audio_segments=1; duration_s=0.001000; text_characters=0"
     )
+
+
+def test_offline_response_boundaries():
+    for request in [
+        {},
+        {"messages": [], "generation": {}},
+        {"messages": [], "generation": {}, "extra": 1},
+    ]:
+        with pytest.raises(ValueError):
+            m.offline_response(request)
