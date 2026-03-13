@@ -73,3 +73,10 @@ def test_stream_response_example():
         {"kind": "text", "sequence": 0, "text": "你好", "final": False},
         {"kind": "text", "sequence": 1, "text": "世界", "final": True},
     ]
+
+
+def test_stream_response_boundaries():
+    for size in [0, -1, True, 1.5]:
+        with pytest.raises(ValueError):
+            m.stream_response("text", size)
+    assert m.stream_response("", 2) == [{"kind": "text", "sequence": 0, "text": "", "final": True}]
