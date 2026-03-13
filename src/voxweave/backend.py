@@ -48,3 +48,14 @@ def offline_response(request: dict) -> str:
             count += 1
             seconds += audio.duration(samples, rate)
     return f"offline test backend: audio_segments={count}; duration_s={seconds:.6f}; text_characters={characters}"
+
+
+def stream_response(text: str, chunk_size: int = 16) -> list[dict]:
+    """Split response text on Unicode codepoint boundaries with one final event."""
+    conversation.text_message("assistant", text)
+    size = _count(chunk_size)
+    chunks = [text[i : i + size] for i in range(0, len(text), size)] or [""]
+    return [
+        {"kind": "text", "sequence": i, "text": chunk, "final": i == len(chunks) - 1}
+        for i, chunk in enumerate(chunks)
+    ]

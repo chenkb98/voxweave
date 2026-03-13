@@ -66,3 +66,10 @@ def test_offline_response_invariants():
         assert response.endswith(f"text_characters={len(text)}")
         assert response == m.offline_response(request)
         assert response.startswith("offline test backend:")
+
+
+def test_stream_response_example():
+    assert m.stream_response("你好世界", 2) == [
+        {"kind": "text", "sequence": 0, "text": "你好", "final": False},
+        {"kind": "text", "sequence": 1, "text": "世界", "final": True},
+    ]
