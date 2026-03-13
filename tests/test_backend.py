@@ -80,3 +80,12 @@ def test_stream_response_boundaries():
         with pytest.raises(ValueError):
             m.stream_response("text", size)
     assert m.stream_response("", 2) == [{"kind": "text", "sequence": 0, "text": "", "final": True}]
+
+
+def test_stream_response_invariants():
+    text = "语音 hello 🎵\n结束"
+    for size in range(1, 12):
+        events = m.stream_response(text, size)
+        assert "".join(event["text"] for event in events) == text
+        assert sum(event["final"] for event in events) == 1 and events[-1]["final"]
+        assert [event["sequence"] for event in events] == list(range(len(events)))
