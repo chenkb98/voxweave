@@ -59,3 +59,29 @@ def stream_response(text: str, chunk_size: int = 16) -> list[dict]:
         {"kind": "text", "sequence": i, "text": chunk, "final": i == len(chunks) - 1}
         for i, chunk in enumerate(chunks)
     ]
+
+
+def run_conversation(
+    samples: ArrayLike,
+    rate: int,
+    frame_size: int = 320,
+    vad_settings: dict | None = None,
+    backend=None,
+) -> dict:
+    """Connect audio turns to conversations and an explicitly injectable backend."""
+    rate = audio.sample_rate(rate)
+    intervals = turns.detect_turns(samples, frame_size, vad_settings)
+    segments = turns.extract_turns(samples, intervals)
+    if len(segments) > 100:
+        raise ValueError("one run is limited to 100 turns")
+    engine = offline_response if backend is None else backend
+    if not callable(engine):
+        raise ValueError("backend must be callable")
+    history: list[dict] = []
+    for segment in segments:
+        history = conversation.append_message(history, conversation.audio_message(segment, rate))
+        response = engine(model_request(history))
+        history = conversation.append_message(
+            history, conversation.text_message("assistant", response)
+        )
+    return {"turns": intervals, "messages": history}

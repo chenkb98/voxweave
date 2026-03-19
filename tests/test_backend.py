@@ -89,3 +89,9 @@ def test_stream_response_invariants():
         assert "".join(event["text"] for event in events) == text
         assert sum(event["final"] for event in events) == 1 and events[-1]["final"]
         assert [event["sequence"] for event in events] == list(range(len(events)))
+
+
+def test_run_conversation_example():
+    result = m.run_conversation([0, 0, 0.1, 0.1, 0.1, 0.1, 0, 0, 0, 0], 8000, 2)
+    assert result["turns"] == [{"start": 2, "end": 6}] and len(result["messages"]) == 2
+    assert result["messages"][-1]["content"][0]["text"].startswith("offline test backend:")
