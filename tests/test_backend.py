@@ -103,3 +103,16 @@ def test_run_conversation_boundaries():
         m.run_conversation([1], 0)
     with pytest.raises(ValueError):
         m.run_conversation([1], 8000, backend="not callable")
+
+
+def test_run_conversation_invariants():
+    seen = []
+
+    def backend(request):
+        seen.append(request)
+        return "observed"
+
+    result = m.run_conversation([0.1] * 4 + [0] * 4 + [0.1] * 4, 8000, 2, backend=backend)
+    assert len(seen) == 2 and len(result["messages"]) == 4
+    assert [len(value["messages"]) for value in seen] == [1, 3]
+    assert all(value["messages"][-1]["role"] == "user" for value in seen)
