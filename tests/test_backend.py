@@ -95,3 +95,11 @@ def test_run_conversation_example():
     result = m.run_conversation([0, 0, 0.1, 0.1, 0.1, 0.1, 0, 0, 0, 0], 8000, 2)
     assert result["turns"] == [{"start": 2, "end": 6}] and len(result["messages"]) == 2
     assert result["messages"][-1]["content"][0]["text"].startswith("offline test backend:")
+
+
+def test_run_conversation_boundaries():
+    assert m.run_conversation([], 8000, 2) == {"turns": [], "messages": []}
+    with pytest.raises(ValueError):
+        m.run_conversation([1], 0)
+    with pytest.raises(ValueError):
+        m.run_conversation([1], 8000, backend="not callable")
