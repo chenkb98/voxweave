@@ -127,3 +127,20 @@ def test_cancel_stream_boundaries():
     assert list(m.cancel_stream([], lambda: False)) == []
     with pytest.raises(ValueError):
         list(m.cancel_stream([1], False))
+
+
+def test_cancel_stream_invariants():
+    state = {"cancelled": False, "closed": False, "pulled": 0}
+
+    def source():
+        try:
+            for value in range(5):
+                state["pulled"] += 1
+                yield value
+        finally:
+            state["closed"] = True
+
+    stream = m.cancel_stream(source(), lambda: state["cancelled"])
+    assert next(stream) == 0
+    state["cancelled"] = True
+    assert list(stream) == [] and state["pulled"] == 1 and state["closed"]
