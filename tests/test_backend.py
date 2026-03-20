@@ -120,3 +120,10 @@ def test_run_conversation_invariants():
 
 def test_cancel_stream_example():
     assert list(m.cancel_stream([1, 2, 3], lambda: False)) == [1, 2, 3]
+
+
+def test_cancel_stream_boundaries():
+    assert list(m.cancel_stream([1, 2, 3], lambda: True)) == []
+    assert list(m.cancel_stream([], lambda: False)) == []
+    with pytest.raises(ValueError):
+        list(m.cancel_stream([1], False))
