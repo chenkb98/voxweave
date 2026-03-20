@@ -116,3 +116,7 @@ def test_run_conversation_invariants():
     assert len(seen) == 2 and len(result["messages"]) == 4
     assert [len(value["messages"]) for value in seen] == [1, 3]
     assert all(value["messages"][-1]["role"] == "user" for value in seen)
+
+
+def test_cancel_stream_example():
+    assert list(m.cancel_stream([1, 2, 3], lambda: False)) == [1, 2, 3]

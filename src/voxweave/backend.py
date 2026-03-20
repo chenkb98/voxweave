@@ -85,3 +85,21 @@ def run_conversation(
             history, conversation.text_message("assistant", response)
         )
     return {"turns": intervals, "messages": history}
+
+
+def cancel_stream(events, is_cancelled):
+    """Stop before pulling another event and close an owned iterator on exit."""
+    if not callable(is_cancelled):
+        raise ValueError("cancellation predicate must be callable")
+    iterator = iter(events)
+    try:
+        while not is_cancelled():
+            try:
+                event = next(iterator)
+            except StopIteration:
+                break
+            yield event
+    finally:
+        close = getattr(iterator, "close", None)
+        if callable(close):
+            close()
