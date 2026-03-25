@@ -21,3 +21,21 @@ def test_event_encode_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.event_encode(dict(value, **{key: invalid}))
+
+
+def test_event_encode_invariants():
+    import json
+    from voxweave.stream import frame_event
+
+    for value in [
+        frame_event([0], 8000, 0, 0),
+        {"kind": "text", "sequence": 1, "text": "ok", "final": True},
+    ]:
+        assert json.loads(m.event_encode(value)) == value
+        for key in value:
+            candidate = dict(value)
+            candidate.pop(key)
+            with pytest.raises(ValueError):
+                m.event_encode(candidate)
+        with pytest.raises(ValueError):
+            m.event_encode(dict(value, unexpected=1))
