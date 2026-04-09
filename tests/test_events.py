@@ -44,3 +44,9 @@ def test_event_encode_invariants():
 def test_event_decode_example():
     event = {"kind": "text", "sequence": 0, "text": "ok", "final": True}
     assert m.event_decode(m.event_encode(event)) == event
+
+
+def test_event_decode_boundaries():
+    for text in ["", "null", "[]", "{}", '{"kind":"text","kind":"audio"}', '{"value":NaN}']:
+        with pytest.raises(ValueError):
+            m.event_decode(text)
