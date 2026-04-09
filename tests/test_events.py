@@ -50,3 +50,12 @@ def test_event_decode_boundaries():
     for text in ["", "null", "[]", "{}", '{"kind":"text","kind":"audio"}', '{"value":NaN}']:
         with pytest.raises(ValueError):
             m.event_decode(text)
+
+
+def test_event_decode_invariants():
+    from voxweave.stream import frame_event
+
+    for channels in [1, 2, 8]:
+        event = frame_event(np.zeros((5, channels)), 16000, 4, 123)
+        encoded = m.event_encode(event)
+        assert m.event_encode(m.event_decode(encoded)) == encoded
