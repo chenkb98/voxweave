@@ -64,3 +64,23 @@ def event_encode(event: dict) -> str:
         )
         + "\n"
     )
+
+
+def event_decode(text: str) -> dict:
+    """Read strict JSON events with duplicate-key and nonfinite rejection."""
+    import json
+
+    def pairs(items):
+        value = {}
+        for key, item in items:
+            if key in value:
+                raise ValueError("duplicate event field")
+            value[key] = item
+        return value
+
+    def constant(value):
+        raise ValueError("invalid JSON constant")
+
+    if not isinstance(text, str) or len(text) > 31000000:
+        raise ValueError("event must be bounded text")
+    return _event(json.loads(text, object_pairs_hook=pairs, parse_constant=constant))

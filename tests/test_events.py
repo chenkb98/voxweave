@@ -39,3 +39,8 @@ def test_event_encode_invariants():
                 m.event_encode(candidate)
         with pytest.raises(ValueError):
             m.event_encode(dict(value, unexpected=1))
+
+
+def test_event_decode_example():
+    event = {"kind": "text", "sequence": 0, "text": "ok", "final": True}
+    assert m.event_decode(m.event_encode(event)) == event
