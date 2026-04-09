@@ -59,3 +59,15 @@ def test_event_decode_invariants():
         event = frame_event(np.zeros((5, channels)), 16000, 4, 123)
         encoded = m.event_encode(event)
         assert m.event_encode(m.event_decode(encoded)) == encoded
+
+
+def test_replay_events_example():
+    from voxweave.stream import frame_event
+
+    result = m.replay_events(
+        [
+            frame_event([0, 0.5], 8000, 0, 0),
+            {"kind": "text", "sequence": 1, "text": "ok", "final": True},
+        ]
+    )
+    assert result["text"] == "ok" and result["final"] and result["sample_rate"] == 8000

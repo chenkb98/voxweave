@@ -84,3 +84,34 @@ def event_decode(text: str) -> dict:
     if not isinstance(text, str) or len(text) > 31000000:
         raise ValueError("event must be bounded text")
     return _event(json.loads(text, object_pairs_hook=pairs, parse_constant=constant))
+
+
+def replay_events(events: list[dict]) -> dict:
+    """Replay contiguous events, checking audio offsets and terminal response state."""
+    import base64
+
+    if not isinstance(events, list) or len(events) > 100000:
+        raise ValueError("invalid event list")
+    values = [_event(event) for event in events]
+    parts, text, rate, channels, offset, ended = [], [], None, None, 0, False
+    for sequence, value in enumerate(values):
+        if value["sequence"] != sequence or ended:
+            raise ValueError("event sequence is discontinuous or already final")
+        if value["kind"] == "text":
+            text.append(value["text"])
+            ended = value["final"]
+        else:
+            if value["offset"] != offset:
+                raise ValueError("audio offsets are discontinuous")
+            if rate is not None and (value["sample_rate"] != rate or value["channels"] != channels):
+                raise ValueError("audio format changed during replay")
+            rate, channels = value["sample_rate"], value["channels"]
+            part = audio.pcm16_decode(base64.b64decode(value["pcm16"], validate=True), channels)
+            parts.append(part)
+            offset += len(part)
+    return {
+        "audio": audio.concatenate(parts),
+        "sample_rate": rate,
+        "text": "".join(text),
+        "final": ended,
+    }
