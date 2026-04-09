@@ -71,3 +71,19 @@ def test_replay_events_example():
         ]
     )
     assert result["text"] == "ok" and result["final"] and result["sample_rate"] == 8000
+
+
+def test_replay_events_boundaries():
+    from voxweave.stream import frame_event
+
+    for events in [
+        [frame_event([0], 8000, 1, 0)],
+        [frame_event([0], 8000, 0, 1)],
+        [
+            {"kind": "text", "sequence": 0, "text": "", "final": True},
+            {"kind": "text", "sequence": 1, "text": "", "final": True},
+        ],
+    ]:
+        with pytest.raises(ValueError):
+            m.replay_events(events)
+    assert m.replay_events([])["audio"].shape == (0, 1)
