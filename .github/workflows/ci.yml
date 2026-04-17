@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: python -m venv .venv
+      - run: .venv/bin/python -m pip install -r requirements-dev.txt
+      - run: make build
+      - run: make test
+      - run: make format-check
+      - run: make lint typecheck
+      - run: .venv/bin/python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=85
