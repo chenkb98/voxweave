@@ -87,3 +87,17 @@ def test_replay_events_boundaries():
         with pytest.raises(ValueError):
             m.replay_events(events)
     assert m.replay_events([])["audio"].shape == (0, 1)
+
+
+def test_replay_events_invariants():
+    from voxweave.stream import frame_event
+    from voxweave import audio
+
+    x = np.linspace(-0.5, 0.5, 17)
+    for size in range(1, 8):
+        events = [
+            frame_event(x[start : start + size], 16000, i, start)
+            for i, start in enumerate(range(0, len(x), size))
+        ]
+        result = m.replay_events([m.event_decode(m.event_encode(value)) for value in events])
+        np.testing.assert_array_equal(result["audio"], audio.pcm16_decode(audio.pcm16_encode(x)))
