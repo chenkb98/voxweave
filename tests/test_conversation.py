@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from voxweave import conversation as m
 
 
@@ -42,6 +43,7 @@ def test_audio_message_boundaries():
 
 def test_audio_message_invariants():
     import base64
+
     from voxweave import audio
 
     result = m.audio_message([[0, -1], [0.5, 0]], 8000)

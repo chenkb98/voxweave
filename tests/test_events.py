@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from voxweave import events as m
 
 
@@ -25,6 +26,7 @@ def test_event_encode_boundaries():
 
 def test_event_encode_invariants():
     import json
+
     from voxweave.stream import frame_event
 
     for value in [
@@ -90,8 +92,8 @@ def test_replay_events_boundaries():
 
 
 def test_replay_events_invariants():
-    from voxweave.stream import frame_event
     from voxweave import audio
+    from voxweave.stream import frame_event
 
     x = np.linspace(-0.5, 0.5, 17)
     for size in range(1, 8):

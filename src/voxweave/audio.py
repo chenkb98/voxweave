@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
+
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
@@ -152,7 +154,7 @@ def mix(left: ArrayLike, right: ArrayLike, weight: float = 0.5) -> NDArray[np.fl
     return as_audio((1 - weight) * a + weight * b)
 
 
-def concatenate(clips: list[ArrayLike]) -> NDArray[np.float64]:
+def concatenate(clips: Sequence[ArrayLike]) -> NDArray[np.float64]:
     """Join clips with matching channel counts in time order."""
     arrays = [as_audio(clip) for clip in clips]
     if not arrays:
@@ -379,7 +381,7 @@ def spectrum(samples: ArrayLike, rate: int) -> tuple[NDArray[np.float64], NDArra
         magnitude[1:] *= 2
     else:
         magnitude[1:-1] *= 2
-    return np.fft.rfftfreq(len(audio), 1 / rate), magnitude
+    return np.fft.rfftfreq(len(audio), 1 / rate).astype(np.float64), magnitude
 
 
 def spectral_centroid(samples: ArrayLike, rate: int) -> float:

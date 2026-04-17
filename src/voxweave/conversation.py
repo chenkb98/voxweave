@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import math
-import numpy as np
-from numpy.typing import ArrayLike, NDArray
-
+from numpy.typing import ArrayLike
 
 from . import audio
 from .stream import _count

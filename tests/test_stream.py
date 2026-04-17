@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from voxweave import stream as m
 
 
@@ -214,6 +215,7 @@ def test_frame_event_boundaries():
 
 def test_frame_event_invariants():
     import base64
+
     from voxweave import audio
 
     event = m.frame_event([[0, -1], [0.5, 0]], 8000, 0, 0)

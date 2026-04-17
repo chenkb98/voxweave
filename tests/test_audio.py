@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from voxweave import audio as m
 
 
@@ -547,7 +548,8 @@ def test_wav_encode_boundaries():
 
 
 def test_wav_encode_invariants():
-    import io, wave
+    import io
+    import wave
 
     for channels in [1, 2, 8]:
         payload = m.wav_encode(np.zeros((7, channels)), 24000)

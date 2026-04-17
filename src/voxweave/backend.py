@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import math
-import numpy as np
-from numpy.typing import ArrayLike, NDArray
 
+from numpy.typing import ArrayLike
 
 from . import audio, conversation, turns
 from .stream import _count
@@ -14,7 +13,7 @@ def model_request(messages: list[dict], generation: dict | None = None) -> dict:
     history = conversation.validate_conversation(messages)
     if history[-1]["role"] != "user":
         raise ValueError("generation requires a final user message")
-    settings = dict(max_tokens=128, temperature=0.0, seed=0)
+    settings: dict = dict(max_tokens=128, temperature=0.0, seed=0)
     if generation is not None:
         if not isinstance(generation, dict) or set(generation) - set(settings):
             raise ValueError("unknown generation fields")
