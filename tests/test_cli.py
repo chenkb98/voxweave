@@ -42,4 +42,4 @@ def test_invalid_command_does_not_write(tmp_path):
 
 def test_installed_style_version():
     result = invoke("--version")
-    assert result.returncode == 0 and result.stdout.strip() == "0.1.0"
+    assert result.returncode == 0 and result.stdout.strip() == "0.1.1"
