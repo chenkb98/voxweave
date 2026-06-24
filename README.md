@@ -51,3 +51,7 @@ CI 覆盖 Python 3.11 和 3.12。开发工具版本由 requirements-dev.txt 固�
 不能用来宣称真实语音准确率或感知质量。PCM16 会量化并饱和削波；线性重采样没有抗混叠滤波。
 
 MIT 许可。参与方式见 [CONTRIBUTING](CONTRIBUTING.md)。
+
+## 可选模型接口
+
+见[上游模型适配器](docs/model-adapter.md)。默认验证不加载模型权重。
