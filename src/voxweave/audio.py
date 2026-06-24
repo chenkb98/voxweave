@@ -37,7 +37,9 @@ def duration(samples: ArrayLike, rate: int) -> float:
 def mono(samples: ArrayLike) -> NDArray[np.float64]:
     """Average channels, retaining a singleton channel dimension."""
     audio = as_audio(samples)
-    return audio.mean(axis=1, keepdims=True)
+    scale = np.max(np.abs(audio), axis=1, keepdims=True)
+    normalized = np.divide(audio, scale, out=np.zeros_like(audio), where=scale != 0)
+    return normalized.mean(axis=1, keepdims=True) * scale
 
 
 def channels(samples: ArrayLike, count: int) -> NDArray[np.float64]:
@@ -124,7 +126,12 @@ def normalize_rms(samples: ArrayLike, target: float = 0.1) -> NDArray[np.float64
 def remove_dc(samples: ArrayLike) -> NDArray[np.float64]:
     """Subtract each channel's mean without mixing channels."""
     audio = as_audio(samples)
-    return audio - audio.mean(axis=0, keepdims=True) if len(audio) else audio
+    if not len(audio):
+        return audio
+    scale = np.max(np.abs(audio), axis=0, keepdims=True)
+    normalized = np.divide(audio, scale, out=np.zeros_like(audio), where=scale != 0)
+    with np.errstate(over="ignore"):
+        return as_audio((normalized - normalized.mean(axis=0, keepdims=True)) * scale)
 
 
 def reverse(samples: ArrayLike) -> NDArray[np.float64]:
@@ -220,9 +227,11 @@ def resample(samples: ArrayLike, source_rate: int, target_rate: int) -> NDArray[
     if not length or not len(audio):
         return np.empty((length, audio.shape[1]), dtype=np.float64)
     positions = np.arange(length) * source_rate / target_rate
+    scale = np.max(np.abs(audio), axis=0)
+    normalized = np.divide(audio, scale, out=np.zeros_like(audio), where=scale != 0)
     return np.column_stack(
         [
-            np.interp(positions, np.arange(len(audio)), audio[:, channel])
+            np.interp(positions, np.arange(len(audio)), normalized[:, channel]) * scale[channel]
             for channel in range(audio.shape[1])
         ]
     )
@@ -274,10 +283,12 @@ def overlap_add(windows: ArrayLike, hop: int, length: int | None = None) -> NDAr
     ):
         raise ValueError("invalid reconstruction length")
     output, counts = np.zeros((total, array.shape[2])), np.zeros((total, 1))
-    for i, part in enumerate(array):
+    scale = float(np.max(np.abs(array), initial=0))
+    normalized = array / scale if scale else array
+    for i, part in enumerate(normalized):
         output[i * hop : i * hop + len(part)] += part
         counts[i * hop : i * hop + len(part)] += 1
-    return (output / np.maximum(counts, 1))[:length]
+    return (output / np.maximum(counts, 1) * scale)[:length]
 
 
 def pcm16_encode(samples: ArrayLike) -> bytes:
@@ -363,6 +374,9 @@ def snr(reference: ArrayLike, estimate: ArrayLike, floor_db: float = -120.0) -> 
     a, b = as_audio(reference), as_audio(estimate)
     if a.shape != b.shape or not np.isfinite(floor_db) or not -300 <= floor_db < 0:
         raise ValueError("SNR requires paired shapes and a negative finite floor")
+    scale = max(peak(a), peak(b))
+    if scale:
+        a, b = a / scale, b / scale
     signal, error = rms(a), rms(a - b)
     if error == 0:
         return -floor_db
@@ -376,17 +390,21 @@ def spectrum(samples: ArrayLike, rate: int) -> tuple[NDArray[np.float64], NDArra
     audio, rate = as_audio(samples), sample_rate(rate)
     if not len(audio):
         return np.empty(0), np.empty((0, audio.shape[1]))
-    magnitude = np.abs(np.fft.rfft(audio, axis=0)) / len(audio)
+    scale = np.max(np.abs(audio), axis=0)
+    normalized = np.divide(audio, scale, out=np.zeros_like(audio), where=scale != 0)
+    magnitude = np.abs(np.fft.rfft(normalized, axis=0)) / len(audio)
     if len(audio) % 2:
         magnitude[1:] *= 2
     else:
         magnitude[1:-1] *= 2
+    with np.errstate(over="ignore"):
+        magnitude = as_audio(magnitude * scale)
     return np.fft.rfftfreq(len(audio), 1 / rate).astype(np.float64), magnitude
 
 
 def spectral_centroid(samples: ArrayLike, rate: int) -> float:
     """Amplitude-weighted centroid in Hz, averaging channel magnitudes."""
-    frequencies, magnitudes = spectrum(samples, rate)
+    frequencies, magnitudes = spectrum(normalize_peak(samples, 1), rate)
     if not len(frequencies):
         return 0.0
     weights = magnitudes.mean(axis=1)
@@ -398,7 +416,7 @@ def spectral_flatness(samples: ArrayLike, rate: int, epsilon: float = 1e-12) -> 
     """Geometric-to-arithmetic mean ratio of the averaged power spectrum."""
     if not np.isfinite(epsilon) or epsilon <= 0:
         raise ValueError("epsilon must be positive")
-    _, magnitudes = spectrum(samples, rate)
+    _, magnitudes = spectrum(normalize_peak(samples, 1), rate)
     if not len(magnitudes) or not np.any(magnitudes):
         return 0.0
     power = (magnitudes / np.max(magnitudes)) ** 2
@@ -411,7 +429,7 @@ def band_energy(samples: ArrayLike, rate: int, low: float, high: float) -> float
     rate = sample_rate(rate)
     if not np.isfinite([low, high]).all() or not 0 <= low <= high <= rate / 2:
         raise ValueError("band must be within [0, Nyquist]")
-    frequencies, magnitude = spectrum(samples, rate)
+    frequencies, magnitude = spectrum(normalize_peak(samples, 1), rate)
     scale = float(np.max(magnitude, initial=0))
     if not scale:
         return 0.0

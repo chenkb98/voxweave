@@ -1,4 +1,4 @@
-from voxweave.events import event_encode, event_decode, replay_events
+from voxweave.events import event_decode, event_encode, replay_events
 from voxweave.stream import frame_event
 
 events = [
