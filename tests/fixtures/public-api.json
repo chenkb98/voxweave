@@ -1,0 +1,601 @@
+{
+  "commands": [
+    {
+      "action": "_HelpAction",
+      "choices": null,
+      "const": null,
+      "default": "==SUPPRESS==",
+      "dest": "help",
+      "nargs": 0,
+      "options": [
+        "-h",
+        "--help"
+      ],
+      "required": false,
+      "type": null
+    },
+    {
+      "action": "_VersionAction",
+      "choices": null,
+      "const": null,
+      "default": "==SUPPRESS==",
+      "dest": "version",
+      "nargs": 0,
+      "options": [
+        "--version"
+      ],
+      "required": false,
+      "type": null
+    },
+    {
+      "action": "_SubParsersAction",
+      "commands": {
+        "analyze": [
+          {
+            "action": "_HelpAction",
+            "choices": null,
+            "const": null,
+            "default": "==SUPPRESS==",
+            "dest": "help",
+            "nargs": 0,
+            "options": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": null,
+            "dest": "path",
+            "nargs": null,
+            "options": [],
+            "required": true,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": 320,
+            "dest": "frame_size",
+            "nargs": null,
+            "options": [
+              "--frame-size"
+            ],
+            "required": false,
+            "type": "int"
+          }
+        ],
+        "demo": [
+          {
+            "action": "_HelpAction",
+            "choices": null,
+            "const": null,
+            "default": "==SUPPRESS==",
+            "dest": "help",
+            "nargs": 0,
+            "options": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": 80,
+            "dest": "frame_size",
+            "nargs": null,
+            "options": [
+              "--frame-size"
+            ],
+            "required": false,
+            "type": "int"
+          }
+        ],
+        "replay": [
+          {
+            "action": "_HelpAction",
+            "choices": null,
+            "const": null,
+            "default": "==SUPPRESS==",
+            "dest": "help",
+            "nargs": 0,
+            "options": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": null,
+            "dest": "path",
+            "nargs": null,
+            "options": [],
+            "required": true,
+            "type": null
+          }
+        ]
+      },
+      "const": null,
+      "default": null,
+      "dest": "command",
+      "nargs": "A...",
+      "options": [],
+      "required": true,
+      "type": null
+    }
+  ],
+  "exports": [
+    "__version__",
+    "AudioFramer",
+    "PCMDecoder",
+    "EnergyVAD",
+    "run_conversation",
+    "replay_events"
+  ],
+  "modules": {
+    "voxweave.adapters": {
+      "constants": {},
+      "definitions": {
+        "qwen2_audio_response": {
+          "kind": "function",
+          "signature": "(request: 'dict', processor: 'Any', model: 'Any') -> 'str'"
+        }
+      }
+    },
+    "voxweave.audio": {
+      "constants": {},
+      "definitions": {
+        "as_audio": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "band_energy": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int', low: 'float', high: 'float') -> 'float'"
+        },
+        "channels": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', count: 'int') -> 'NDArray[np.float64]'"
+        },
+        "clipping_fraction": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', threshold: 'float' = 1.0) -> 'float'"
+        },
+        "concatenate": {
+          "kind": "function",
+          "signature": "(clips: 'Sequence[ArrayLike]') -> 'NDArray[np.float64]'"
+        },
+        "crop": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', start: 'int', stop: 'int') -> 'NDArray[np.float64]'"
+        },
+        "crossfade": {
+          "kind": "function",
+          "signature": "(left: 'ArrayLike', right: 'ArrayLike', frames: 'int') -> 'NDArray[np.float64]'"
+        },
+        "duration": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'float'"
+        },
+        "fade_in": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', frames: 'int') -> 'NDArray[np.float64]'"
+        },
+        "fade_out": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', frames: 'int') -> 'NDArray[np.float64]'"
+        },
+        "frames": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', size: 'int', hop: 'int', pad_end: 'bool' = True) -> 'NDArray[np.float64]'"
+        },
+        "gain": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', decibels: 'float') -> 'NDArray[np.float64]'"
+        },
+        "mix": {
+          "kind": "function",
+          "signature": "(left: 'ArrayLike', right: 'ArrayLike', weight: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        },
+        "mono": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "normalize_peak": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', target: 'float' = 0.95) -> 'NDArray[np.float64]'"
+        },
+        "normalize_rms": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', target: 'float' = 0.1) -> 'NDArray[np.float64]'"
+        },
+        "overlap_add": {
+          "kind": "function",
+          "signature": "(windows: 'ArrayLike', hop: 'int', length: 'int | None' = None) -> 'NDArray[np.float64]'"
+        },
+        "pad": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', before: 'int' = 0, after: 'int' = 0) -> 'NDArray[np.float64]'"
+        },
+        "pcm16_decode": {
+          "kind": "function",
+          "signature": "(data: 'bytes', channel_count: 'int' = 1) -> 'NDArray[np.float64]'"
+        },
+        "pcm16_encode": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'bytes'"
+        },
+        "peak": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'float'"
+        },
+        "remove_dc": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "repeat": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', count: 'int') -> 'NDArray[np.float64]'"
+        },
+        "resample": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', source_rate: 'int', target_rate: 'int') -> 'NDArray[np.float64]'"
+        },
+        "reverse": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "rms": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'float'"
+        },
+        "sample_rate": {
+          "kind": "function",
+          "signature": "(value: 'int') -> 'int'"
+        },
+        "snr": {
+          "kind": "function",
+          "signature": "(reference: 'ArrayLike', estimate: 'ArrayLike', floor_db: 'float' = -120.0) -> 'float'"
+        },
+        "spectral_centroid": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'float'"
+        },
+        "spectral_flatness": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int', epsilon: 'float' = 1e-12) -> 'float'"
+        },
+        "spectrum": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'tuple[NDArray[np.float64], NDArray[np.float64]]'"
+        },
+        "trim": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', threshold: 'float' = 0.0001) -> 'NDArray[np.float64]'"
+        },
+        "wav_decode": {
+          "kind": "function",
+          "signature": "(payload: 'bytes') -> 'tuple[NDArray[np.float64], int]'"
+        },
+        "wav_encode": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'bytes'"
+        },
+        "zero_crossing_rate": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'float'"
+        }
+      }
+    },
+    "voxweave.backend": {
+      "constants": {},
+      "definitions": {
+        "cancel_stream": {
+          "kind": "function",
+          "signature": "(events, is_cancelled)"
+        },
+        "model_request": {
+          "kind": "function",
+          "signature": "(messages: 'list[dict]', generation: 'dict | None' = None) -> 'dict'"
+        },
+        "offline_response": {
+          "kind": "function",
+          "signature": "(request: 'dict') -> 'str'"
+        },
+        "run_conversation": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int', frame_size: 'int' = 320, vad_settings: 'dict | None' = None, backend=None) -> 'dict'"
+        },
+        "stream_response": {
+          "kind": "function",
+          "signature": "(text: 'str', chunk_size: 'int' = 16) -> 'list[dict]'"
+        }
+      }
+    },
+    "voxweave.batching": {
+      "constants": {},
+      "definitions": {
+        "attention_mask": {
+          "kind": "function",
+          "signature": "(lengths: 'ArrayLike', maximum: 'int | None' = None) -> 'NDArray[np.bool_]'"
+        },
+        "pack_tokens": {
+          "kind": "function",
+          "signature": "(tokens: 'ArrayLike', vocabulary: 'int' = 1024) -> 'NDArray[np.int64]'"
+        },
+        "pad_audio_batch": {
+          "kind": "function",
+          "signature": "(clips: 'list[ArrayLike]') -> 'dict'"
+        },
+        "token_intervals": {
+          "kind": "function",
+          "signature": "(count: 'int', samples_per_token: 'int', rate: 'int', offset: 'int' = 0) -> 'NDArray[np.float64]'"
+        },
+        "unpack_tokens": {
+          "kind": "function",
+          "signature": "(packed: 'ArrayLike', codebooks: 'int', vocabulary: 'int' = 1024) -> 'NDArray[np.int64]'"
+        }
+      }
+    },
+    "voxweave.cli": {
+      "constants": {},
+      "definitions": {
+        "build_parser": {
+          "kind": "function",
+          "signature": "() -> 'argparse.ArgumentParser'"
+        },
+        "main": {
+          "kind": "function",
+          "signature": "(argv: 'list[str] | None' = None) -> 'int'"
+        }
+      }
+    },
+    "voxweave.conversation": {
+      "constants": {},
+      "definitions": {
+        "append_message": {
+          "kind": "function",
+          "signature": "(messages: 'list[dict]', message: 'dict') -> 'list[dict]'"
+        },
+        "apply_delta": {
+          "kind": "function",
+          "signature": "(state: 'dict', update: 'dict') -> 'dict'"
+        },
+        "audio_message": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int', text: 'str' = '') -> 'dict'"
+        },
+        "replace_transcript": {
+          "kind": "function",
+          "signature": "(message: 'dict', text: 'str') -> 'dict'"
+        },
+        "text_message": {
+          "kind": "function",
+          "signature": "(role: 'str', text: 'str') -> 'dict'"
+        },
+        "truncate_context": {
+          "kind": "function",
+          "signature": "(messages: 'list[dict]', max_turns: 'int') -> 'list[dict]'"
+        },
+        "validate_conversation": {
+          "kind": "function",
+          "signature": "(messages: 'list[dict]') -> 'list[dict]'"
+        },
+        "validate_message": {
+          "kind": "function",
+          "signature": "(message: 'dict') -> 'dict'"
+        }
+      }
+    },
+    "voxweave.events": {
+      "constants": {},
+      "definitions": {
+        "event_decode": {
+          "kind": "function",
+          "signature": "(text: 'str') -> 'dict'"
+        },
+        "event_encode": {
+          "kind": "function",
+          "signature": "(event: 'dict') -> 'str'"
+        },
+        "replay_events": {
+          "kind": "function",
+          "signature": "(events: 'list[dict]') -> 'dict'"
+        }
+      }
+    },
+    "voxweave.stream": {
+      "constants": {},
+      "definitions": {
+        "AudioFramer": {
+          "kind": "class",
+          "members": {
+            "feed": {
+              "kind": "method",
+              "signature": "(self, samples: 'ArrayLike') -> 'list[NDArray[np.float64]]'"
+            },
+            "flush": {
+              "kind": "method",
+              "signature": "(self, pad_end: 'bool' = False) -> 'list[NDArray[np.float64]]'"
+            }
+          },
+          "public_attributes": [
+            "emitted",
+            "pending",
+            "size"
+          ],
+          "signature": "(size: 'int', channels: 'int' = 1)"
+        },
+        "EnergyTracker": {
+          "kind": "class",
+          "members": {
+            "feed": {
+              "kind": "method",
+              "signature": "(self, samples: 'ArrayLike') -> 'float'"
+            },
+            "reset": {
+              "kind": "method",
+              "signature": "(self) -> 'None'"
+            }
+          },
+          "public_attributes": [
+            "decay",
+            "level"
+          ],
+          "signature": "(decay: 'float' = 0.8)"
+        },
+        "JitterBuffer": {
+          "kind": "class",
+          "members": {
+            "flush": {
+              "kind": "method",
+              "signature": "(self) -> 'None'"
+            },
+            "push": {
+              "kind": "method",
+              "signature": "(self, sequence: 'int', payload: 'bytes') -> 'list[bytes]'"
+            }
+          },
+          "public_attributes": [
+            "capacity",
+            "expected",
+            "pending"
+          ],
+          "signature": "(capacity: 'int' = 32, expected: 'int' = 0)"
+        },
+        "PCMDecoder": {
+          "kind": "class",
+          "members": {
+            "feed": {
+              "kind": "method",
+              "signature": "(self, payload: 'bytes') -> 'NDArray[np.float64]'"
+            },
+            "flush": {
+              "kind": "method",
+              "signature": "(self) -> 'None'"
+            }
+          },
+          "public_attributes": [
+            "channels",
+            "pending"
+          ],
+          "signature": "(channels: 'int' = 1)"
+        },
+        "RingBuffer": {
+          "kind": "class",
+          "members": {
+            "__len__": {
+              "kind": "method",
+              "signature": "(self) -> 'int'"
+            },
+            "append": {
+              "kind": "method",
+              "signature": "(self, samples: 'ArrayLike') -> 'int'"
+            },
+            "read": {
+              "kind": "method",
+              "signature": "(self, count: 'int') -> 'NDArray[np.float64]'"
+            }
+          },
+          "public_attributes": [
+            "capacity",
+            "overflow",
+            "samples"
+          ],
+          "signature": "(capacity: 'int', channels: 'int' = 1, overflow: 'str' = 'reject')"
+        },
+        "SampleClock": {
+          "kind": "class",
+          "members": {
+            "advance": {
+              "kind": "method",
+              "signature": "(self, frames: 'int') -> 'tuple[int, int]'"
+            },
+            "seconds": {
+              "get": "(self) -> 'float'",
+              "kind": "property",
+              "set": null
+            },
+            "snapshot": {
+              "kind": "method",
+              "signature": "(self) -> 'dict'"
+            }
+          },
+          "public_attributes": [
+            "offset",
+            "rate"
+          ],
+          "signature": "(rate: 'int', offset: 'int' = 0)"
+        },
+        "byte_chunks": {
+          "kind": "function",
+          "signature": "(payload: 'bytes', size: 'int') -> 'list[bytes]'"
+        },
+        "frame_event": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int', sequence: 'int', offset: 'int') -> 'dict'"
+        }
+      }
+    },
+    "voxweave.turns": {
+      "constants": {},
+      "definitions": {
+        "EnergyVAD": {
+          "kind": "class",
+          "members": {
+            "feed": {
+              "kind": "method",
+              "signature": "(self, level: 'float') -> 'list[dict]'"
+            },
+            "flush": {
+              "kind": "method",
+              "signature": "(self) -> 'list[dict]'"
+            }
+          },
+          "public_attributes": [
+            "closed",
+            "config",
+            "index",
+            "run",
+            "silence",
+            "start"
+          ],
+          "signature": "(settings: 'dict | None' = None)"
+        },
+        "detect_turns": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', size: 'int' = 320, settings: 'dict | None' = None) -> 'list[dict]'"
+        },
+        "extract_turns": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', turns: 'list[dict]') -> 'list[NDArray[np.float64]]'"
+        },
+        "frame_labels": {
+          "kind": "function",
+          "signature": "(length: 'int', turns: 'list[dict]', size: 'int') -> 'NDArray[np.bool_]'"
+        },
+        "merge_turns": {
+          "kind": "function",
+          "signature": "(turns: 'list[dict]', max_gap: 'int') -> 'list[dict]'"
+        },
+        "vad_config": {
+          "kind": "function",
+          "signature": "(values: 'dict | None' = None) -> 'dict'"
+        }
+      }
+    }
+  },
+  "schema_version": 1
+}

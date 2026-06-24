@@ -19,3 +19,20 @@ make lint typecheck
 
 不要提交个人录音、凭据、大型模型或不可再分发的数据。示例与测试结果
 只能说明所覆盖的行为，不能代替真实模型基准或用户研究。
+
+## Deliberate interface changes
+
+`tests/fixtures/public-api.json` pins every public module definition, function signature,
+class constructor, public method/property/state attribute, package export and CLI argument.
+The test discovers modules automatically so new modules also require review.
+After reviewing an intended change, regenerate the fixture explicitly:
+
+```sh
+.venv/bin/python -c 'import json, runpy; from pathlib import Path; snapshot = runpy.run_path("tests/test_api_contract.py")["snapshot"]; Path("tests/fixtures/public-api.json").write_text(json.dumps(snapshot(), indent=2, sort_keys=True) + "\n")'
+make build
+make test
+make format-check
+make lint typecheck
+```
+
+The fixture is never regenerated automatically by a test or CI run.

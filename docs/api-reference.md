@@ -11,3 +11,5 @@
 | `turns` | [turns](api/turns.md) |
 
 顶层便利导出：`__version__`, `AudioFramer`, `PCMDecoder`, `EnergyVAD`, `run_conversation`, `replay_events`。
+
+Optional pretrained model integration: [adapter contract](model-adapter.md).

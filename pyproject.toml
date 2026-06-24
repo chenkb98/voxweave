@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "voxweave"
-version = "0.1.1"
+version = "0.1.2"
 description = "Streaming speech language model components"
 readme = "README.md"
 requires-python = ">=3.11"

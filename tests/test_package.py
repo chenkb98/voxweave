@@ -2,7 +2,7 @@ import voxweave
 
 
 def test_version_contract():
-    assert voxweave.__version__ == "0.1.1"
+    assert voxweave.__version__ == "0.1.2"
     assert voxweave.__all__ == [
         "__version__",
         "AudioFramer",
