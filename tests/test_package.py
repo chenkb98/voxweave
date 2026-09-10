@@ -11,3 +11,11 @@ def test_version_contract():
         "run_conversation",
         "replay_events",
     ]
+
+
+def test_pep561_typed_marker_exists():
+    """PEP 561 requires py.typed for type checkers to use inline annotations."""
+    from importlib import resources
+    import voxweave
+
+    assert resources.files(voxweave).joinpath("py.typed").is_file()
