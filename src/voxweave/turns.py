@@ -82,7 +82,7 @@ def detect_turns(samples: ArrayLike, size: int = 320, settings: dict | None = No
         elif begin is not None:
             result.append({"start": begin, "end": min(len(values), event["frame"] * size)})
             begin = None
-    return result
+    return _intervals(result, len(values))
 
 
 def _intervals(turns: list[dict], length: int | None = None) -> list[dict]:
