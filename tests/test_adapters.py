@@ -83,3 +83,14 @@ def test_text_only_request_and_eval_requirement():
 def test_rejects_unexpected_request_fields():
     with pytest.raises(ValueError):
         qwen2_audio_response({}, Processor(), Model())
+
+
+class BadCountProcessor(Processor):
+    def batch_decode(self, ids, **arguments):
+        return ["first", "second"]
+
+
+def test_rejects_batch_decode_returning_wrong_response_count():
+    request = model_request([text_message("user", "hello")], {"max_tokens": 16})
+    with pytest.raises(ValueError, match="processor must decode exactly one response"):
+        qwen2_audio_response(request, BadCountProcessor(), Model())
