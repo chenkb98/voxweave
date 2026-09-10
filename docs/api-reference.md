@@ -3,6 +3,7 @@
 | 模块 | 参考 |
 | --- | --- |
 | `audio` | [audio](api/audio.md) |
+| `adapters` | [adapters](api/adapters.md) |
 | `backend` | [backend](api/backend.md) |
 | `batching` | [batching](api/batching.md) |
 | `conversation` | [conversation](api/conversation.md) |
