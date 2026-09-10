@@ -74,6 +74,8 @@ def pad(samples: ArrayLike, before: int = 0, after: int = 0) -> NDArray[np.float
         for v in [before, after]
     ):
         raise ValueError("padding counts must be bounded nonnegative integers")
+    if before + after > 10000000:
+        raise ValueError("combined padding exceeds ten million frames")
     return np.pad(audio, ((before, after), (0, 0)))
 
 
