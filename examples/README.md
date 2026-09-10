@@ -1,9 +1,14 @@
-# 可执行示例
+# Executable examples
 
-先安装项目开发依赖，三个示例均使用合成数据并在 CPU 上运行。
+Install the project dev dependencies first. All examples use synthetic data
+and run on CPU without external models or network services.
 
-- `python examples/pcm_stream.py`
-- `python examples/voice_turns.py`
-- `python examples/event_replay.py`
+```sh
+python examples/pcm_stream.py
+python examples/voice_turns.py
+python examples/event_replay.py
+python examples/jitter_buffer.py
+```
 
-产生的文件位于当前目录的 `outputs/` 下；这些结果不是实际语音模型基准。
+Each example prints its result to stdout. The outputs are synthetic
+diagnostics, not real speech model benchmarks.
