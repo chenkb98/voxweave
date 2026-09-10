@@ -97,6 +97,26 @@ def peak(samples: ArrayLike) -> float:
     """Return the largest absolute sample, or zero for empty audio."""
     return float(np.max(np.abs(as_audio(samples)), initial=0.0))
 
+def is_silent(samples: ArrayLike, threshold: float = 1e-6) -> bool:
+    """Check if audio is below a given threshold.
+
+    Returns True if the peak amplitude is less than the threshold,
+    indicating the audio is effectively silent.
+
+    Args:
+        samples: Audio samples to check
+        threshold: Amplitude threshold (default 1e-6, approximately -120 dB)
+
+    Returns:
+        True if peak amplitude is below threshold, False otherwise
+
+    Raises:
+        ValueError: if threshold is not finite or negative
+    """
+    if not np.isfinite(threshold) or threshold < 0:
+        raise ValueError("threshold must be finite and nonnegative")
+    return peak(samples) < threshold
+
 
 def rms(samples: ArrayLike) -> float:
     """Compute stable root-mean-square amplitude over all samples."""
