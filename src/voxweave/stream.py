@@ -131,6 +131,10 @@ class SampleClock:
     def snapshot(self) -> dict:
         return {"sample_rate": self.rate, "offset": self.offset}
 
+    def reset(self, offset: int = 0) -> None:
+        """Reset the clock to a given offset."""
+        self.offset = _count(offset, True, 2**53 - 1)
+
 
 class JitterBuffer:
     """Release byte packets only when sequence numbers become contiguous."""
