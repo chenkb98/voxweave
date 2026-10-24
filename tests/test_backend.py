@@ -145,3 +145,33 @@ def test_cancel_stream_invariants():
     assert next(stream) == 0
     state["cancelled"] = True
     assert list(stream) == [] and state["pulled"] == 1 and state["closed"]
+
+
+
+def test_offline_response_with_mixed_audio_and_text_content():
+    from voxweave import conversation
+
+    message = conversation.audio_message([0] * 16000, 16000, "describe this audio")
+    request = m.model_request([message])
+    response = m.offline_response(request)
+    # offline_response processes only the last message content parts
+    assert "audio_segments=1" in response
+    assert "duration_s=1.000000" in response
+    assert "text_characters=19" in response
+
+
+def test_offline_response_counts_only_final_message_content():
+    from voxweave import conversation
+
+    # offline_response iterates over messages[-1]["content"] only
+    history = [
+        conversation.audio_message([0] * 8000, 8000),
+        conversation.text_message("assistant", "acknowledged"),
+        conversation.audio_message([0] * 16000, 8000, "transcribe"),
+    ]
+    request = m.model_request(history)
+    response = m.offline_response(request)
+    # Only the last message is counted: 1 audio segment (2s) + 10 text chars
+    assert "audio_segments=1" in response
+    assert "duration_s=2.000000" in response
+    assert "text_characters=10" in response
