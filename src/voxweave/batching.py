@@ -35,6 +35,11 @@ def attention_mask(lengths: ArrayLike, maximum: int | None = None) -> NDArray[np
     if values.dtype.kind not in "iu" or values.ndim != 1 or np.any(values < 0):
         raise ValueError("lengths must be a nonnegative integer vector")
     required = int(values.max(initial=0))
+    if len(values) == 0:
+        if maximum is None:
+            return np.empty((0, 0), dtype=bool)
+        maximum = _count(maximum, True)
+        return np.empty((0, maximum), dtype=bool)
     maximum = required if maximum is None else _count(maximum, True)
     if maximum < required or len(values) * maximum > 10000000:
         raise ValueError("invalid mask width or allocation")
