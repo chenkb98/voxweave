@@ -117,5 +117,7 @@ def truncate_context(messages: list[dict], max_turns: int) -> list[dict]:
         if message["role"] == "user":
             groups.append([message])
         else:
+            if not groups:
+                raise ValueError("assistant message without preceding user message")
             groups[-1].append(message)
     return system + [message for group in groups[-max_turns:] for message in group]
