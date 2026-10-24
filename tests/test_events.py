@@ -103,3 +103,16 @@ def test_replay_events_invariants():
         ]
         result = m.replay_events([m.event_decode(m.event_encode(value)) for value in events])
         np.testing.assert_array_equal(result["audio"], audio.pcm16_decode(audio.pcm16_encode(x)))
+
+
+def test_replay_events_text_only_returns_zero_sample_rate():
+    result = m.replay_events(
+        [
+            {"kind": "text", "sequence": 0, "text": "hello", "final": False},
+            {"kind": "text", "sequence": 1, "text": " world", "final": True},
+        ]
+    )
+    assert result["sample_rate"] == 0
+    assert result["text"] == "hello world"
+    assert result["final"] is True
+    assert result["audio"].shape == (0, 1)

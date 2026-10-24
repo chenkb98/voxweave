@@ -106,7 +106,7 @@ def replay_events(events: list[dict]) -> dict:
             offset += len(part)
     return {
         "audio": audio.concatenate(parts),
-        "sample_rate": rate,
+        "sample_rate": rate if rate is not None else 0,
         "text": "".join(text),
         "final": ended,
     }
