@@ -78,6 +78,11 @@ class AudioFramer:
         self.pending = self.pending[:0].copy()
         return [result]
 
+    def reset(self) -> None:
+        """Clear pending buffer and reset emitted counter for reuse."""
+        self.pending = self.pending[:0].copy()
+        self.emitted = 0
+
 
 class RingBuffer:
     """Bounded audio queue with explicit rejection or oldest-frame eviction."""
